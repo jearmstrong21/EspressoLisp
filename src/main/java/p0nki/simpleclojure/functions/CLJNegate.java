@@ -1,6 +1,6 @@
 package p0nki.simpleclojure.functions;
 
-import p0nki.simpleclojure.CLJContext;
+import p0nki.simpleclojure.run.CLJContext;
 import p0nki.simpleclojure.objects.CLJNumeric;
 import p0nki.simpleclojure.objects.CLJObject;
 

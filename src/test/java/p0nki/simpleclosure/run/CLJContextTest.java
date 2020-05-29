@@ -1,8 +1,8 @@
-package p0nki.simpleclosure;
+package p0nki.simpleclosure.run;
 
 import org.junit.Assert;
 import org.junit.Test;
-import p0nki.simpleclojure.CLJContext;
+import p0nki.simpleclojure.run.CLJContext;
 import p0nki.simpleclojure.exceptions.ClojureException;
 import p0nki.simpleclojure.objects.CLJObject;
 
