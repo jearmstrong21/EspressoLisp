@@ -19,6 +19,8 @@ public class CLJContextTest {
         CLJContext ctx = new CLJContext();
         log(ctx.read("(+ 4(* 3(- 2 5))"));
         log(ctx.read("(+ 4 (* 3 (- 2 5))"));
+        log(ctx.read("(+ 4 (- 5))"));
+        log(ctx.read("(+ 4 (- -5))"));
     }
 
 }
