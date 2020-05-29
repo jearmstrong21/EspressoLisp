@@ -1,14 +1,14 @@
-package p0nki.simpleclojure.token;
+package p0nki.racket.token;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
-public class CLJUnquotedLiteralToken extends CLJToken {
+public class RacketUnquotedLiteralToken extends RacketToken {
 
     private final String value;
 
-    public CLJUnquotedLiteralToken(String value) {
-        super(CLJTokenType.UNQUOTED_LITERAL);
+    public RacketUnquotedLiteralToken(String value, int startIndex, int endIndex) {
+        super(CLJTokenType.UNQUOTED_LITERAL, startIndex, endIndex);
         this.value = value;
     }
 

@@ -1,11 +1,27 @@
-package p0nki.simpleclojure.token;
+package p0nki.racket.token;
 
-public class CLJToken {
+public class RacketToken {
 
     private final CLJTokenType type;
+    private final int startIndex;
+    private final int endIndex;
 
-    public CLJToken(CLJTokenType type) {
+    public RacketToken(CLJTokenType type, int startIndex, int endIndex) {
         this.type = type;
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public int getEndIndex() {
+        return endIndex;
+    }
+
+    public CLJTokenType getType() {
+        return type;
     }
 
     @Override

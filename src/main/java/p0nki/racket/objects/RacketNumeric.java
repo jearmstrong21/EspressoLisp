@@ -1,12 +1,12 @@
-package p0nki.simpleclojure.objects;
+package p0nki.racket.objects;
 
 import java.math.BigDecimal;
 
-public final class CLJNumeric extends CLJObject {
+public final class RacketNumeric extends RacketObject {
 
     private final BigDecimal decimal;
 
-    public CLJNumeric(BigDecimal decimal) {
+    public RacketNumeric(BigDecimal decimal) {
         this.decimal = decimal;
     }
 

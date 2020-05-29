@@ -1,12 +1,12 @@
-package p0nki.simpleclojure.functions;
+package p0nki.racket.functions;
 
 import java.math.BigDecimal;
 
-public class CLJAddition extends CLJBinaryNumericFunction {
+public class RacketAddition extends RacketBinaryNumericFunction {
 
-    public static final CLJAddition INSTANCE = new CLJAddition();
+    public static final RacketAddition INSTANCE = new RacketAddition();
 
-    private CLJAddition(){
+    private RacketAddition(){
 
     }
 

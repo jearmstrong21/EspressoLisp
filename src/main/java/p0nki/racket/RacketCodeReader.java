@@ -1,9 +1,9 @@
-package p0nki.simpleclojure;
+package p0nki.racket;
 
 import java.util.function.Predicate;
 
 //Taken from CommandParser framework, made by me, no big deal
-public class CodeReader {
+public class RacketCodeReader {
 
     public static Predicate<Character> isSpace = ch -> ch == ' ';
     public static Predicate<Character> isNotSpace = ch -> ch != ' ';
@@ -11,7 +11,7 @@ public class CodeReader {
     private final String buffer;
     private int index;
 
-    public CodeReader(String buffer) {
+    public RacketCodeReader(String buffer) {
         this.buffer = buffer;
         index = 0;
     }

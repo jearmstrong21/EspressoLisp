@@ -1,4 +1,4 @@
-package p0nki.simpleclojure.token;
+package p0nki.racket.token;
 
 public enum CLJTokenType {
 
