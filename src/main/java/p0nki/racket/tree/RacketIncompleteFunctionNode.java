@@ -3,16 +3,17 @@ package p0nki.racket.tree;
 import p0nki.racket.exceptions.RacketException;
 import p0nki.racket.object.RacketFunction;
 import p0nki.racket.object.RacketObject;
+import p0nki.racket.run.RacketContext;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RacketExpressionNode implements RacketTreeNode {
+public class RacketIncompleteFunctionNode implements RacketTreeNode {
 
     private final String name;
     private final List<RacketTreeNode> args;
 
-    public RacketExpressionNode(String name, List<RacketTreeNode> args) {
+    public RacketIncompleteFunctionNode(String name, List<RacketTreeNode> args) {
         this.name = name;
         this.args = args;
     }
@@ -38,7 +39,7 @@ public class RacketExpressionNode implements RacketTreeNode {
         for (int i = 0; i < function.getArgNames().size(); i++) {
             pushed.getObjects().put(function.getArgNames().get(i), args.get(i).evaluate(context));
         }
-        return function.getTreeRoot().evaluate(context);
+        return function.getTreeRoot().evaluate(pushed);
     }
 
 }

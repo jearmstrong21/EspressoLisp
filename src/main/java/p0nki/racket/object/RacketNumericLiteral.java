@@ -18,4 +18,9 @@ public class RacketNumericLiteral extends RacketObject {
     public String toString() {
         return "numeric[" + value + "]";
     }
+
+    @Override
+    public String getType() {
+        return "numeric";
+    }
 }

@@ -30,6 +30,11 @@ public class RacketFunction extends RacketObject {
 
     @Override
     public String toString() {
+        return "function[" + name + "]";
+    }
+
+    @Override
+    public String getType() {
         return "function";
     }
 

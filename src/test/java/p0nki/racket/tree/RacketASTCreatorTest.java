@@ -13,10 +13,14 @@ public class RacketASTCreatorTest {
 
     @Test
     public void test() throws RacketException {
-        List<RacketToken> tokens = RacketTokenizer.tokenize("(def (blah 3 4) 5 (no-args 2))");
-        System.out.println(tokens.stream().map(RacketToken::toString).collect(Collectors.joining("\n")));
+        String code = "(def (blah 3 4)5 (       no-args) looks-like-no-args-but-is-actually-variable)";
+        List<RacketToken> tokens = RacketTokenizer.tokenize(code);
+//        System.out.println(tokens.stream().map(RacketToken::toString).collect(Collectors.joining("\n")));
         RacketTreeNode node = RacketASTCreator.parse(tokens);
-        System.out.println(node.debugStringify(""));
+//        System.out.println();
+//        System.out.println(code);
+//        System.out.println();
+//        System.out.println(node.debugStringify(""));
     }
 
 }

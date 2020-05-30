@@ -12,6 +12,10 @@ public class RacketException extends Exception {
         this.token = token;
     }
 
+    public static RacketException invalidType(String expectedType, String actual, RacketToken token) {
+        return new RacketException("Invalid type. Expected " + expectedType + ", got " + actual, token);
+    }
+
     public static RacketException tooManyArguments(RacketToken token) {
         return new RacketException("Too many arguments", token);
     }

@@ -18,38 +18,42 @@ public class RacketASTCreator {
     }
 
     //NOTE - only consumes tokens until it parses something. Tokens almost ALWAYS will have more.
-    public static RacketTreeNode parseNonExpression(List<RacketToken> tokens) throws RacketException {
-        RacketToken token = tokens.remove(0);
-        if (token.getType() != RacketTokenType.UNQUOTED_LITERAL)
-            throw RacketException.expected(RacketTokenType.UNQUOTED_LITERAL, token);
-        RacketUnquotedLiteralToken unquotedLiteral = (RacketUnquotedLiteralToken) token;
-        Optional<BigDecimal> numeric = unquotedLiteral.getNumeric();
+    public static RacketTreeNode parseUnquotedLiteral(RacketUnquotedLiteralToken token) {
+        Optional<BigDecimal> numeric = token.getNumeric();
         if (numeric.isPresent()) return new RacketLiteralNode(new RacketNumericLiteral(numeric.get()));
-        return new RacketVariableNode(unquotedLiteral.getValue());
+        return new RacketVariableNode(token.getValue());
     }
 
     public static RacketTreeNode parse(List<RacketToken> tokens) throws RacketException {
         RacketToken first = tokens.get(0);
         if (first.getType() == RacketTokenType.LEFT_PAREN) {
             tokens.remove(0);
-            RacketToken op = tokens.remove(0);
-            RacketToken startArg;
+            RacketToken second = tokens.remove(0);
+            if (second.getType() != RacketTokenType.UNQUOTED_LITERAL)
+                throw RacketException.expected(RacketTokenType.UNQUOTED_LITERAL, RacketTokenType.LEFT_PAREN, second);
+            RacketUnquotedLiteralToken op = (RacketUnquotedLiteralToken) second;
             List<RacketTreeNode> children = new ArrayList<>();
             boolean ended = false;
             for (int i = 0; i < 1000; i++) {
-                startArg = tokens.get(0);
-                if (startArg.getType() == RacketTokenType.RIGHT_PAREN) {
+                if (tokens.get(0).getType() == RacketTokenType.RIGHT_PAREN) {
                     ended = true;
                     break;
                 }
-                if (startArg.getType() == RacketTokenType.UNQUOTED_LITERAL || startArg.getType() == RacketTokenType.LEFT_PAREN) {
+                if (tokens.get(0).getType() == RacketTokenType.UNQUOTED_LITERAL) {
+                    children.add(parseUnquotedLiteral((RacketUnquotedLiteralToken) tokens.remove(0)));
+                } else if (tokens.get(0).getType() == RacketTokenType.LEFT_PAREN) {
                     children.add(parse(tokens));
+                } else {
+                    throw RacketException.expected2(RacketTokenType.LEFT_PAREN, RacketTokenType.UNQUOTED_LITERAL, tokens.get(0));
                 }
             }
             if (!ended) throw RacketException.tooManyArguments(op);
-            return new RacketExpressionNode(((RacketUnquotedLiteralToken) op).getValue(), children);
+            RacketToken rightParen = tokens.remove(0);
+            if (rightParen.getType() != RacketTokenType.RIGHT_PAREN)
+                throw RacketException.expected(RacketTokenType.RIGHT_PAREN, rightParen);
+            return new RacketIncompleteFunctionNode(op.getValue(), children);
         } else if (first.getType() == RacketTokenType.UNQUOTED_LITERAL) {
-            return parseNonExpression(tokens);
+            return parseUnquotedLiteral((RacketUnquotedLiteralToken) tokens.remove(0));
         } else {
             throw RacketException.expected2(RacketTokenType.LEFT_PAREN, RacketTokenType.UNQUOTED_LITERAL, first);
         }
