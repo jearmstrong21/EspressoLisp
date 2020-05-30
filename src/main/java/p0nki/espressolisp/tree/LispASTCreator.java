@@ -1,10 +1,8 @@
 package p0nki.espressolisp.tree;
 
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.LispBooleanLiteral;
-import p0nki.espressolisp.object.LispFunction;
-import p0nki.espressolisp.object.LispNullObject;
-import p0nki.espressolisp.object.LispNumberLiteral;
+import p0nki.espressolisp.object.*;
+import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
 import p0nki.espressolisp.token.LispUnquotedLiteralToken;
@@ -78,6 +76,42 @@ public class LispASTCreator {
                     throw LispException.expected(LispTokenType.RIGHT_PAREN, lastToken);
                 }
                 return new LispLiteralNode(new LispFunction(funcName, argNames, treeNode));
+            } else if (op.getValue().equals("for")) {
+                LispToken tokenDummy = tokens.remove(0);
+                if (tokenDummy.getType() != LispTokenType.UNQUOTED_LITERAL) {
+                    throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.UNQUOTED_LITERAL, tokenDummy);
+                }
+                String dummyVarName = ((LispUnquotedLiteralToken) tokenDummy).getValue();
+                LispTreeNode firstLimitNode = parse(tokens);
+                LispTreeNode secondLimitNode = parse(tokens);
+                LispTreeNode body = parse(tokens);
+                LispToken lastToken = tokens.remove(0);
+                if (lastToken.getType() != LispTokenType.RIGHT_PAREN) {
+                    throw LispException.expected(LispTokenType.RIGHT_PAREN, lastToken);
+                }
+                return new LispTreeNode() {
+                    @Override
+                    public LispObject evaluate(LispContext context) throws LispException {
+                        LispContext pushed = context.push();
+                        LispObject firstLimitObject = firstLimitNode.evaluate(context).fullyDereference();
+                        LispObject secondLimitObject = secondLimitNode.evaluate(context).fullyDereference();
+                        double firstLimit = firstLimitObject.asNumber().getValue();
+                        double secondLimit = secondLimitObject.asNumber().getValue();
+                        if (firstLimit != (int) firstLimit) throw LispException.notInteger(null);
+                        if (secondLimit != (int) secondLimit) throw LispException.notInteger(null);
+                        pushed.getObjects().put(dummyVarName, new LispVariableReference(dummyVarName, new LispNumberLiteral(firstLimit)));
+                        while (pushed.getObjects().get(dummyVarName).fullyDereference().asNumber().getValue() < secondLimit) {
+                            body.evaluate(pushed);
+                            pushed.getObjects().get(dummyVarName).set(new LispVariableReference(dummyVarName, new LispNumberLiteral(pushed.getObjects().get(dummyVarName).fullyDereference().asNumber().getValue() + 1)));
+                        }
+                        return LispNullObject.INSTANCE;
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "for[do something here]";
+                    }
+                };
             }
             List<LispTreeNode> children = new ArrayList<>();
             boolean ended = false;

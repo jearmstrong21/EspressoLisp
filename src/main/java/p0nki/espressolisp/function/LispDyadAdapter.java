@@ -6,7 +6,7 @@ import p0nki.espressolisp.run.LispContext;
 
 import java.util.List;
 
-public interface LispBinaryFunctionAdapter extends LispFunctionalInterface {
+public interface LispDyadAdapter extends LispFunctionalInterface {
 
     LispObject evaluate(LispContext parentContext, LispObject arg1, LispObject arg2) throws LispException;
 

@@ -6,7 +6,7 @@ import p0nki.espressolisp.run.LispContext;
 
 import java.util.List;
 
-public interface LispUnaryFunctionAdapter extends LispFunctionalInterface {
+public interface LispMonadAdapter extends LispFunctionalInterface {
 
     LispObject evaluate(LispContext parentContext, LispObject arg1) throws LispException;
 
