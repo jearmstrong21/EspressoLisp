@@ -14,6 +14,7 @@ public class LispTokenizer {
         this.tokens = tokens;
         this.reader = reader;
         parse();
+        flushBuffer();
     }
 
     private String buffer = "";

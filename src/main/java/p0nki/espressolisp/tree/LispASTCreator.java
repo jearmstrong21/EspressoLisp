@@ -4,7 +4,6 @@ import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispBooleanLiteral;
 import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispNumberLiteral;
-import p0nki.espressolisp.object.LispVariableReference;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
 import p0nki.espressolisp.token.LispUnquotedLiteralToken;
@@ -26,7 +25,8 @@ public class LispASTCreator {
         Optional<Boolean> bool = token.getBoolean();
         if (bool.isPresent()) return new LispLiteralNode(new LispBooleanLiteral(bool.get()));
         if (token.getNull()) return new LispLiteralNode(LispNullObject.INSTANCE);
-        return new LispLiteralNode(new LispVariableReference(token.getValue()));
+        return new LispVariableNode(token.getValue());
+//        return new LispLiteralNode(new LispVariableReference(token.getValue(), LispNullObject.INSTANCE));
     }
 
     public static LispTreeNode parse(List<LispToken> tokens) throws LispException {

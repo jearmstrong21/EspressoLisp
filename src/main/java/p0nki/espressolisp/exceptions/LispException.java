@@ -12,6 +12,10 @@ public class LispException extends Exception {
         this.token = token;
     }
 
+    public static LispException invalidValueType(boolean expectedLValue, boolean gotLValue, LispToken token) {
+        return new LispException("Invalid value. Expected " + (expectedLValue ? "lvalue" : "rvalue") + ", got " + (gotLValue ? "lvalue" : "rvalue"), token);
+    }
+
     public static LispException invalidType(String expectedType, String actual, LispToken token) {
         return new LispException("Invalid type. Expected " + expectedType + ", got " + actual, token);
     }

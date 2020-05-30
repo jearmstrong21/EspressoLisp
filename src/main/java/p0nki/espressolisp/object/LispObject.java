@@ -2,14 +2,21 @@ package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
 
-public abstract class LispObject {
+public abstract class LispObject implements LispRValue {
 
     public abstract String toString();
 
     public abstract String getType();
 
     public abstract boolean isLValue();
+
     public abstract boolean isRValue();
+
+    public final LispObject fullyDereference() {
+        LispObject obj = this;
+        while (obj.isLValue()) obj = obj.get();
+        return obj;
+    }
 
     public final LispNumberLiteral asNumber() throws LispException {
         if (this instanceof LispNumberLiteral) return (LispNumberLiteral) this;

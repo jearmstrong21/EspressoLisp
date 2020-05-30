@@ -3,6 +3,7 @@ package p0nki.espressolisp.tree;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispFunction;
 import p0nki.espressolisp.object.LispObject;
+import p0nki.espressolisp.object.LispVariableReference;
 import p0nki.espressolisp.run.LispContext;
 
 import java.util.List;
@@ -31,13 +32,16 @@ public class LispIncompleteFunctionNode implements LispTreeNode {
     @Override
     public LispObject evaluate(LispContext context) throws LispException {
         LispObject object = context.get(name);
+        while (object.isLValue()) object = object.get();
         if (!(object instanceof LispFunction)) throw LispException.uncallableVariable(name, null);
         LispFunction function = (LispFunction) object;
         if (function.getArgNames().size() != args.size())
             throw LispException.invalidArgList(function.getArgNames().size(), args.size(), null);
         LispContext pushed = context.push();
         for (int i = 0; i < function.getArgNames().size(); i++) {
-            pushed.getObjects().put(function.getArgNames().get(i), args.get(i).evaluate(context));
+            LispObject obj = args.get(i).evaluate(context);
+            System.out.println(name+": ARG " + i + ": " + obj + "," + obj.fullyDereference());
+            pushed.getObjects().put(function.getArgNames().get(i), new LispVariableReference(function.getArgNames().get(i), obj));
         }
         return function.getTreeRoot().evaluate(pushed);
     }

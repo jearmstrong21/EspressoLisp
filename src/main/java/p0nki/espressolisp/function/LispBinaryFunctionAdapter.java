@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface LispBinaryFunctionAdapter extends LispFunctionalInterface {
 
-    LispObject evaluate(LispContext context, LispObject arg1, LispObject arg2) throws LispException;
+    LispObject evaluate(LispContext parentContext, LispObject arg1, LispObject arg2) throws LispException;
 
     @Override
-    default LispObject evaluate(LispContext context, List<LispObject> args) throws LispException {
-        return evaluate(context, args.get(0), args.get(1));
+    default LispObject evaluate(LispContext parentContext,List<LispObject> args) throws LispException {
+        return evaluate(parentContext, args.get(0), args.get(1));
     }
 
 }

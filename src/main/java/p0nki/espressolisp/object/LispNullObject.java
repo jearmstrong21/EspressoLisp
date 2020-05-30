@@ -1,6 +1,6 @@
 package p0nki.espressolisp.object;
 
-public class LispNullObject extends LispObject {
+public class LispNullObject extends LispLiteral {
 
     public static final LispNullObject INSTANCE = new LispNullObject();
 

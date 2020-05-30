@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface LispFunctionalInterface {
 
-    LispObject evaluate(LispContext context, List<LispObject> args) throws LispException;
+    LispObject evaluate(LispContext parentContext, List<LispObject> args) throws LispException;
 
 }
