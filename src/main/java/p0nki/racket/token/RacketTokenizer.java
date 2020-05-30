@@ -5,12 +5,12 @@ import p0nki.racket.RacketCodeReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CLJTokenizer {
+public class RacketTokenizer {
 
     private final List<RacketToken> tokens;
     private final RacketCodeReader reader;
 
-    private CLJTokenizer(List<RacketToken> tokens, RacketCodeReader reader) {
+    private RacketTokenizer(List<RacketToken> tokens, RacketCodeReader reader) {
         this.tokens = tokens;
         this.reader = reader;
         parse();
@@ -21,7 +21,7 @@ public class CLJTokenizer {
     private void flushBuffer() {
         buffer = buffer.trim();
         if (buffer.length() == 0) return;
-        tokens.add(new RacketUnquotedLiteralToken(buffer));
+        tokens.add(new RacketUnquotedLiteralToken(buffer, reader.getIndex() - buffer.length(), reader.getIndex()));
         buffer = "";
     }
 
@@ -34,27 +34,27 @@ public class CLJTokenizer {
             }
             if (ch == '(') {
                 flushBuffer();
-                tokens.add(new RacketToken(CLJTokenType.LEFT_PAREN, reader.getIndex() - 1, reader.getIndex()));
+                tokens.add(new RacketToken(RacketTokenType.LEFT_PAREN, reader.getIndex() - 1, reader.getIndex()));
                 continue;
             }
             if (ch == ')') {
                 flushBuffer();
-                tokens.add(new RacketToken(CLJTokenType.RIGHT_PAREN, reader.getIndex() - 1, reader.getIndex()));
+                tokens.add(new RacketToken(RacketTokenType.RIGHT_PAREN, reader.getIndex() - 1, reader.getIndex()));
                 continue;
             }
             if (ch == '[') {
                 flushBuffer();
-                tokens.add(new RacketToken(CLJTokenType.LEFT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
+                tokens.add(new RacketToken(RacketTokenType.LEFT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
                 continue;
             }
             if (ch == ']') {
                 flushBuffer();
-                tokens.add(new RacketToken(CLJTokenType.RIGHT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
+                tokens.add(new RacketToken(RacketTokenType.RIGHT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
                 continue;
             }
             if (ch == ',') {
                 flushBuffer();
-                tokens.add(new RacketToken(CLJTokenType.COMMA, reader.getIndex() - 1, reader.getIndex()));
+                tokens.add(new RacketToken(RacketTokenType.COMMA, reader.getIndex() - 1, reader.getIndex()));
                 continue;
             }
             buffer += ch;
@@ -67,7 +67,7 @@ public class CLJTokenizer {
 
     public static List<RacketToken> tokenize(RacketCodeReader reader) {
         List<RacketToken> tokens = new ArrayList<>();
-        new CLJTokenizer(tokens, reader);
+        new RacketTokenizer(tokens, reader);
         return tokens;
     }
 

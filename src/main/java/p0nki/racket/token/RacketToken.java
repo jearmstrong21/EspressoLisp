@@ -2,11 +2,11 @@ package p0nki.racket.token;
 
 public class RacketToken {
 
-    private final CLJTokenType type;
+    private final RacketTokenType type;
     private final int startIndex;
     private final int endIndex;
 
-    public RacketToken(CLJTokenType type, int startIndex, int endIndex) {
+    public RacketToken(RacketTokenType type, int startIndex, int endIndex) {
         this.type = type;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
@@ -20,7 +20,7 @@ public class RacketToken {
         return endIndex;
     }
 
-    public CLJTokenType getType() {
+    public RacketTokenType getType() {
         return type;
     }
 

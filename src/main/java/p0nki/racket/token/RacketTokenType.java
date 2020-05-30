@@ -1,6 +1,6 @@
 package p0nki.racket.token;
 
-public enum CLJTokenType {
+public enum RacketTokenType {
 
     LEFT_PAREN,
     RIGHT_PAREN,

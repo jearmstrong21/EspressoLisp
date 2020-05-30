@@ -8,7 +8,7 @@ public class RacketUnquotedLiteralToken extends RacketToken {
     private final String value;
 
     public RacketUnquotedLiteralToken(String value, int startIndex, int endIndex) {
-        super(CLJTokenType.UNQUOTED_LITERAL, startIndex, endIndex);
+        super(RacketTokenType.UNQUOTED_LITERAL, startIndex, endIndex);
         this.value = value;
     }
 
