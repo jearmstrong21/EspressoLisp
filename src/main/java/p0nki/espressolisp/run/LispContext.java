@@ -1,8 +1,11 @@
 package p0nki.espressolisp.run;
 
+import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.LispVariableReference;
+import p0nki.espressolisp.token.LispTokenizer;
+import p0nki.espressolisp.tree.LispASTCreator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +44,10 @@ public class LispContext {
             objects.put(name, new LispVariableReference(name, LispNullObject.INSTANCE));
         }
         return objects.get(name);
+    }
+
+    public LispObject evaluate(String code) throws LispException {
+        return LispASTCreator.parse(LispTokenizer.tokenize(code)).evaluate(this);
     }
 
 }
