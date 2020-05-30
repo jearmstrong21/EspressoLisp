@@ -6,13 +6,13 @@ import p0nki.racket.run.RacketContext;
 
 import java.util.List;
 
-public interface RacketBinaryFunctionAdapter extends RacketFunctionalInterface {
+public interface RacketUnaryFunctionAdapter extends RacketFunctionalInterface {
 
-    RacketObject evaluate(RacketContext context, RacketObject arg1, RacketObject arg2) throws RacketException;
+    RacketObject evaluate(RacketContext context, RacketObject arg1) throws RacketException;
 
     @Override
     default RacketObject evaluate(RacketContext context, List<RacketObject> args) throws RacketException {
-        return evaluate(context, args.get(0), args.get(1));
+        return evaluate(context, args.get(0));
     }
 
 }

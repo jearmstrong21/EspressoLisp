@@ -1,6 +1,7 @@
 package p0nki.racket.run;
 
 import p0nki.racket.exceptions.RacketException;
+import p0nki.racket.object.RacketNullObject;
 import p0nki.racket.object.RacketObject;
 
 import java.util.HashMap;
@@ -24,8 +25,10 @@ public class RacketContext {
         return objects;
     }
 
-    public RacketObject get(String name) throws RacketException {
-        if (!objects.containsKey(name)) throw RacketException.unknownVariable(name, null);
+    public RacketObject get(String name) {
+        if (!objects.containsKey(name)) {
+            return RacketNullObject.INSTANCE;
+        }
         return objects.get(name);
     }
 

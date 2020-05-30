@@ -1,12 +1,14 @@
 package p0nki.racket.tree;
 
 import p0nki.racket.exceptions.RacketException;
-import p0nki.racket.object.RacketNumericLiteral;
+import p0nki.racket.object.RacketBooleanLiteral;
+import p0nki.racket.object.RacketNullObject;
+import p0nki.racket.object.RacketNumberLiteral;
+import p0nki.racket.object.RacketVariableReference;
 import p0nki.racket.token.RacketToken;
 import p0nki.racket.token.RacketTokenType;
 import p0nki.racket.token.RacketUnquotedLiteralToken;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +21,12 @@ public class RacketASTCreator {
 
     //NOTE - only consumes tokens until it parses something. Tokens almost ALWAYS will have more.
     public static RacketTreeNode parseUnquotedLiteral(RacketUnquotedLiteralToken token) {
-        Optional<BigDecimal> numeric = token.getNumeric();
-        if (numeric.isPresent()) return new RacketLiteralNode(new RacketNumericLiteral(numeric.get()));
-        return new RacketVariableNode(token.getValue());
+        Optional<Double> number = token.getNumber();
+        if (number.isPresent()) return new RacketLiteralNode(new RacketNumberLiteral(number.get()));
+        Optional<Boolean> bool = token.getBoolean();
+        if (bool.isPresent()) return new RacketLiteralNode(new RacketBooleanLiteral(bool.get()));
+        if (token.getNull()) return new RacketLiteralNode(RacketNullObject.INSTANCE);
+        return new RacketLiteralNode(new RacketVariableReference(token.getValue()));
     }
 
     public static RacketTreeNode parse(List<RacketToken> tokens) throws RacketException {

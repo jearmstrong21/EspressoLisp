@@ -8,9 +8,14 @@ public abstract class RacketObject {
 
     public abstract String getType();
 
-    public final RacketNumericLiteral asNumericLiteral() throws RacketException {
-        if (this instanceof RacketNumericLiteral) return (RacketNumericLiteral) this;
-        throw RacketException.invalidType("integer", getType(), null);
+    public final RacketNumberLiteral asNumber() throws RacketException {
+        if (this instanceof RacketNumberLiteral) return (RacketNumberLiteral) this;
+        throw RacketException.invalidType("number", getType(), null);
+    }
+
+    public final RacketBooleanLiteral asBoolean() throws RacketException {
+        if (this instanceof RacketBooleanLiteral) return (RacketBooleanLiteral) this;
+        throw RacketException.invalidType("boolean", getType(), null);
     }
 
 }

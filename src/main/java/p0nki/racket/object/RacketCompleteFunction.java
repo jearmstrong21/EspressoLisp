@@ -18,7 +18,7 @@ public class RacketCompleteFunction extends RacketFunction {
                 for (int i = 0; i < argNames.size(); i++) {
                     args.add(context.get(argNames.get(i)));
                 }
-                return function.evaluate(args);
+                return function.evaluate(context, args);
             }
 
             @Override

@@ -1,6 +1,5 @@
 package p0nki.racket.token;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 
 public class RacketUnquotedLiteralToken extends RacketToken {
@@ -16,12 +15,22 @@ public class RacketUnquotedLiteralToken extends RacketToken {
         return value;
     }
 
-    public Optional<BigDecimal> getNumeric() {
+    public Optional<Double> getNumber() {
         try {
-            return Optional.of(new BigDecimal(value));
+            return Optional.of(Double.parseDouble(value));
         } catch (NumberFormatException ignored) {
             return Optional.empty();
         }
+    }
+
+    public Optional<Boolean> getBoolean() {
+        if (value.equals("true")) return Optional.of(true);
+        if (value.equals("false")) return Optional.of(false);
+        return Optional.empty();
+    }
+
+    public boolean getNull(){
+        return value.equals("null");
     }
 
     @Override
