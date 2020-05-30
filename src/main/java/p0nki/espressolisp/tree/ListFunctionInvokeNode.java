@@ -9,12 +9,12 @@ import p0nki.espressolisp.run.LispContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LispIncompleteFunctionNode implements LispTreeNode {
+public class ListFunctionInvokeNode implements LispTreeNode {
 
     private final String name;
     private final List<LispTreeNode> args;
 
-    public LispIncompleteFunctionNode(String name, List<LispTreeNode> args) {
+    public ListFunctionInvokeNode(String name, List<LispTreeNode> args) {
         this.name = name;
         this.args = args;
     }
@@ -40,7 +40,6 @@ public class LispIncompleteFunctionNode implements LispTreeNode {
         LispContext pushed = context.push();
         for (int i = 0; i < function.getArgNames().size(); i++) {
             LispObject obj = args.get(i).evaluate(context);
-            System.out.println(name+": ARG " + i + ": " + obj + "," + obj.fullyDereference());
             pushed.getObjects().put(function.getArgNames().get(i), new LispVariableReference(function.getArgNames().get(i), obj));
         }
         return function.getTreeRoot().evaluate(pushed);

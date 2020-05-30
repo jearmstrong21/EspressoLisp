@@ -29,12 +29,13 @@ public class LispUnquotedLiteralToken extends LispToken {
         return Optional.empty();
     }
 
-    public boolean getNull(){
+    public boolean getNull() {
         return value.equals("null");
     }
 
     @Override
     public String toString() {
-        return String.format("%-10s", value) + "UNQUOTED_LITERAL";
+//        return String.format("%-10s", value) + "UNQUOTED_LITERAL";
+        return "UNQUOTED_LITERAL[" + value + ",[" + getStartIndex() + "," + getEndIndex() + "]]";
     }
 }

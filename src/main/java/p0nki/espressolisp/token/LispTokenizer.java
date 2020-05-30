@@ -22,7 +22,7 @@ public class LispTokenizer {
     private void flushBuffer() {
         buffer = buffer.trim();
         if (buffer.length() == 0) return;
-        tokens.add(new LispUnquotedLiteralToken(buffer, reader.getIndex() - buffer.length(), reader.getIndex()));
+        tokens.add(new LispUnquotedLiteralToken(buffer, reader.getIndex() - buffer.length() - 1, reader.getIndex() - 1));
         buffer = "";
     }
 
