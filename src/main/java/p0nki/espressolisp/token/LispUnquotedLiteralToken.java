@@ -16,6 +16,7 @@ public class LispUnquotedLiteralToken extends LispToken {
     }
 
     public Optional<Double> getNumber() {
+        if (value.equals("nan")) return Optional.of(Double.NaN);
         try {
             return Optional.of(Double.parseDouble(value));
         } catch (NumberFormatException ignored) {

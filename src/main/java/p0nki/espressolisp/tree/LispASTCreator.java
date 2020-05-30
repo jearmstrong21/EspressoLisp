@@ -32,14 +32,11 @@ public class LispASTCreator {
         if (first.getType() == LispTokenType.LEFT_PAREN) {
             tokens.remove(0);
             LispToken second = tokens.remove(0);
+            if (second.getType() == LispTokenType.RIGHT_PAREN) return new LispLiteralNode(LispNullObject.INSTANCE);
             if (second.getType() != LispTokenType.UNQUOTED_LITERAL)
                 throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.LEFT_PAREN, second);
             LispUnquotedLiteralToken op = (LispUnquotedLiteralToken) second;
             if (op.getValue().equals("func")) { // FUNCTION DECLARATION
-                LispToken tokenName = tokens.remove(0);
-                if (tokenName.getType() != LispTokenType.UNQUOTED_LITERAL)
-                    throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.UNQUOTED_LITERAL, tokenName);
-                String funcName = ((LispUnquotedLiteralToken) tokenName).getValue();
                 LispToken leftBracket = tokens.remove(0);
                 if (leftBracket.getType() != LispTokenType.LEFT_BRACKET)
                     throw LispException.expected(LispTokenType.LEFT_BRACKET, LispTokenType.UNQUOTED_LITERAL, leftBracket);
@@ -68,22 +65,18 @@ public class LispASTCreator {
                     }
                 }
                 if (prevToken.getType() != LispTokenType.RIGHT_BRACKET) {
-                    throw LispException.tooManyArguments(tokenName);
+                    throw LispException.tooManyArguments(prevToken);
                 }
                 LispTreeNode treeNode = parse(tokens);
                 LispToken lastToken = tokens.remove(0);
                 if (lastToken.getType() != LispTokenType.RIGHT_PAREN) {
                     throw LispException.expected(LispTokenType.RIGHT_PAREN, lastToken);
                 }
-                return new LispLiteralNode(new LispFunction(funcName, argNames, treeNode));
+                return new LispLiteralNode(new LispFunction(argNames, treeNode));
             } else if (op.getValue().equals("for")) {
-                LispToken tokenDummy = tokens.remove(0);
-                if (tokenDummy.getType() != LispTokenType.UNQUOTED_LITERAL) {
-                    throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.UNQUOTED_LITERAL, tokenDummy);
-                }
-                String dummyVarName = ((LispUnquotedLiteralToken) tokenDummy).getValue();
-                LispTreeNode firstLimitNode = parse(tokens);
-                LispTreeNode secondLimitNode = parse(tokens);
+                LispTreeNode initialize = parse(tokens);
+                LispTreeNode condition = parse(tokens);
+                LispTreeNode increment = parse(tokens);
                 LispTreeNode body = parse(tokens);
                 LispToken lastToken = tokens.remove(0);
                 if (lastToken.getType() != LispTokenType.RIGHT_PAREN) {
@@ -92,24 +85,17 @@ public class LispASTCreator {
                 return new LispTreeNode() {
                     @Override
                     public LispObject evaluate(LispContext context) throws LispException {
-                        LispContext pushed = context.push();
-                        LispObject firstLimitObject = firstLimitNode.evaluate(context).fullyDereference();
-                        LispObject secondLimitObject = secondLimitNode.evaluate(context).fullyDereference();
-                        double firstLimit = firstLimitObject.asNumber().getValue();
-                        double secondLimit = secondLimitObject.asNumber().getValue();
-                        if (firstLimit != (int) firstLimit) throw LispException.notInteger(null);
-                        if (secondLimit != (int) secondLimit) throw LispException.notInteger(null);
-                        pushed.getObjects().put(dummyVarName, new LispVariableReference(dummyVarName, new LispNumberLiteral(firstLimit)));
-                        while (pushed.getObjects().get(dummyVarName).fullyDereference().asNumber().getValue() < secondLimit) {
-                            body.evaluate(pushed);
-                            pushed.getObjects().get(dummyVarName).set(new LispVariableReference(dummyVarName, new LispNumberLiteral(pushed.getObjects().get(dummyVarName).fullyDereference().asNumber().getValue() + 1)));
+                        initialize.evaluate(context);
+                        while (condition.evaluate(context).fullyDereference().asBoolean().getValue()) {
+                            body.evaluate(context.push());
+                            increment.evaluate(context);
                         }
                         return LispNullObject.INSTANCE;
                     }
 
                     @Override
                     public String debugStringify(String indent) {
-                        return "for[do something here]";
+                        return null;
                     }
                 };
             }

@@ -3,21 +3,16 @@ package p0nki.espressolisp.object;
 import p0nki.espressolisp.tree.LispTreeNode;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LispFunction extends LispLiteral {
 
-    private final String name;
     private final List<String> argNames;
     private final LispTreeNode treeRoot;
 
-    public LispFunction(String name, List<String> argNames, LispTreeNode treeRoot) {
-        this.name = name;
+    public LispFunction(List<String> argNames, LispTreeNode treeRoot) {
         this.argNames = argNames;
         this.treeRoot = treeRoot;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<String> getArgNames() {
@@ -30,7 +25,7 @@ public class LispFunction extends LispLiteral {
 
     @Override
     public String toString() {
-        return "function[" + name + "]";
+        return "function[" + String.join(",", argNames) + "]";
     }
 
     @Override

@@ -12,8 +12,8 @@ public class LispException extends Exception {
         this.token = token;
     }
 
-    public static LispException notInteger(LispToken token) {
-        return new LispException("Required integer", token);
+    public static LispException unexpectedNull(LispToken token){
+        return new LispException("Unexpected null", token);
     }
 
     public static LispException prematureEnd(LispToken token) {

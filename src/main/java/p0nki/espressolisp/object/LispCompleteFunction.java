@@ -10,20 +10,20 @@ import java.util.List;
 
 public class LispCompleteFunction extends LispFunction {
 
-    public LispCompleteFunction(String name, List<String> argNames, LispFunctionalInterface function) {
-        super(name, argNames, new LispTreeNode() {
+    public LispCompleteFunction(List<String> argNames, LispFunctionalInterface function) {
+        super(argNames, new LispTreeNode() {
             @Override
             public LispObject evaluate(LispContext context) throws LispException {
                 List<LispObject> args = new ArrayList<>();
-                for (int i = 0; i < argNames.size(); i++) {
-                    args.add(context.get(argNames.get(i)));
+                for (String argName : argNames) {
+                    args.add(context.get(argName));
                 }
                 return function.evaluate(context, args);
             }
 
             @Override
             public String debugStringify(String indent) {
-                return indent + name;
+                return indent + "function";
             }
         });
     }

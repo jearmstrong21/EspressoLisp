@@ -35,6 +35,7 @@ public class LispContextTest {
         System.out.println(code);
         try {
             LispTreeNode tree = LispASTCreator.parse(new ArrayList<>(tokens));
+            System.out.println(tree.debugStringify(""));
             LispObject res = tree.evaluate(context);
             System.out.print("=> " + res);
             while (res.isLValue()) {
@@ -66,37 +67,37 @@ public class LispContextTest {
     }
 
     @Test
-    public void test() throws LispException {
+    public void test() {
         LispContext context = new LispContext(null);
-        context.getObjects().put("+", new LispVariableReference("+", new LispCompleteFunction("+", of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+        context.getObjects().put("+", new LispVariableReference("+", new LispCompleteFunction(of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.fullyDereference();
             arg2 = arg2.fullyDereference();
             if (arg1 == LispNullObject.INSTANCE || arg2 == LispNullObject.INSTANCE)
-                return LispNullObject.INSTANCE;
+                throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() + arg2.asNumber().getValue());
         })));
-        context.getObjects().put("-", new LispVariableReference("-", new LispCompleteFunction("-", of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+        context.getObjects().put("-", new LispVariableReference("-", new LispCompleteFunction(of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.fullyDereference();
             arg2 = arg2.fullyDereference();
             if (arg1 == LispNullObject.INSTANCE || arg2 == LispNullObject.INSTANCE)
-                return LispNullObject.INSTANCE;
+                throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() - arg2.asNumber().getValue());
         })));
-        context.getObjects().put("*", new LispVariableReference("*", new LispCompleteFunction("*", of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+        context.getObjects().put("*", new LispVariableReference("*", new LispCompleteFunction(of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.fullyDereference();
             arg2 = arg2.fullyDereference();
             if (arg1 == LispNullObject.INSTANCE || arg2 == LispNullObject.INSTANCE)
-                return LispNullObject.INSTANCE;
+                throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() * arg2.asNumber().getValue());
         })));
-        context.getObjects().put("/", new LispVariableReference("/", new LispCompleteFunction("/", of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+        context.getObjects().put("/", new LispVariableReference("/", new LispCompleteFunction(of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.fullyDereference();
             arg2 = arg2.fullyDereference();
             if (arg1 == LispNullObject.INSTANCE || arg2 == LispNullObject.INSTANCE)
-                return LispNullObject.INSTANCE;
+                throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() / arg2.asNumber().getValue());
         })));
-        context.getObjects().put("=", new LispVariableReference("=", new LispCompleteFunction("=", of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+        context.getObjects().put("=", new LispVariableReference("=", new LispCompleteFunction(of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.get();
             arg2 = arg2.fullyDereference();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
@@ -110,26 +111,44 @@ public class LispContextTest {
             }
             return arg2;
         })));
-        context.getObjects().put("inc", new LispVariableReference("inc", new LispCompleteFunction("inc", of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
+        context.getObjects().put("inc", new LispVariableReference("inc", new LispCompleteFunction(of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.fullyDereference();
-            if (arg1 == LispNullObject.INSTANCE) return LispNullObject.INSTANCE;
+            if (arg1 == LispNullObject.INSTANCE) throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() + 1);
         })));
-        context.getObjects().put("dec", new LispVariableReference("dec", new LispCompleteFunction("dec", of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
+        context.getObjects().put("dec", new LispVariableReference("dec", new LispCompleteFunction( of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.fullyDereference();
-            if (arg1 == LispNullObject.INSTANCE) return LispNullObject.INSTANCE;
+            if (arg1 == LispNullObject.INSTANCE) throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() - 1);
         })));
-        context.getObjects().put("randf", new LispVariableReference("randf", new LispCompleteFunction("randf", new ArrayList<>(), (parentContext, args) -> new LispNumberLiteral(Math.random()))));
-        context.getObjects().put("randb", new LispVariableReference("randb", new LispCompleteFunction("randb", new ArrayList<>(), (parentContext, args) -> new LispBooleanLiteral(Math.random() < 0.5))));
-//        context.getObjects().put("println", new LispVariableReference("println", new LispCompleteFunction("println", of("arg1")), ));
+        context.getObjects().put("<", new LispVariableReference("<", new LispCompleteFunction(of("arg1", "arg2"), (LispDyadAdapter)(ctx,arg1,arg2)->{
+            arg1=arg1.fullyDereference();
+            arg2=arg2.fullyDereference();
+            if(arg1==LispNullObject.INSTANCE||arg2==LispNullObject.INSTANCE)
+                throw LispException.unexpectedNull(null);
+            return new LispBooleanLiteral(arg1.asNumber().getValue() < arg2.asNumber().getValue());
+        })));
+        context.getObjects().put("randf", new LispVariableReference("randf", new LispCompleteFunction(new ArrayList<>(), (parentContext, args) -> new LispNumberLiteral(Math.random()))));
+        context.getObjects().put("randb", new LispVariableReference("randb", new LispCompleteFunction(new ArrayList<>(), (parentContext, args) -> new LispBooleanLiteral(Math.random() < 0.5))));
         System.out.println();
-        run(context, "(= iterations 1000)");
-        run(context, "(= randomSum 0)");
-        run(context, "(for i 0 iterations (= randomSum (+ randomSum (randf))))");
-        run(context, "randomSum");
-        run(context, "(= randomSum (/ randomSum iterations))");
-        run(context, "randomSum");
+//        run(context, "(= iterations 1000)");
+//        run(context, "(= randomSum 0)");
+//        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (= randomSum (+ randomSum (randf))))");
+//        run(context, "randomSum");
+//        run(context, "(= randomSum (/ randomSum iterations))");
+//        run(context, "randomSum");
+//        run(context, "()");
+
+        run(context, "(= secondfunc (func [f, x, y] (* y (f x))))");
+        run(context, "secondfunc");
+        run(context, "(secondfunc (func [x] (+ 2 x)) 5 4)");
+
+//        run(context, "(= test 0)");
+//        run(context, "(= myfunc (func myfunc [x] (= test (+ x test))))");
+//        run(context, "test");
+//        run(context, "(myfunc 50)");
+//        run(context, "test");
+
 //        run(context, "(/ (+ (randf) (+ (randf) (+ (randf) (+ (randf) (+ (randf) (randf)))))) 6)");
 //        run(context, "(= c (* 3 5))");
 //        run(context, "(= d (+ 2 (inc c)))");
