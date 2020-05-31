@@ -5,7 +5,7 @@ import p0nki.espressolisp.library.LispBuiltinLibrary;
 import p0nki.espressolisp.library.LispLibrary;
 import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispObject;
-import p0nki.espressolisp.object.LispVariableReference;
+import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.utils.LispLogger;
@@ -19,7 +19,7 @@ public class LispContext {
     private final List<String> loadedLibraries;
     private final List<String> importedLibraries;
 
-    private final Map<String, LispVariableReference> objects;
+    private final Map<String, LispReference> objects;
     private final LispLogger logger;
 
     public LispContext(LispLogger logger, LispContext parent) throws LispException {
@@ -61,11 +61,11 @@ public class LispContext {
         return logger;
     }
 
-    public void overwrite(String name, LispVariableReference ref) {
+    public void overwrite(String name, LispReference ref) {
         objects.put(name, ref);
     }
 
-    public LispVariableReference set(String name, LispObject obj) throws LispException {
+    public LispReference set(String name, LispObject obj) throws LispException {
         get(name).set(obj);
         return get(name);
     }
@@ -89,9 +89,9 @@ public class LispContext {
         return ctx;
     }
 
-    public LispVariableReference get(String name) {
+    public LispReference get(String name) {
         if (!objects.containsKey(name)) {
-            objects.put(name, new LispVariableReference(name, false, LispNullObject.INSTANCE));
+            objects.put(name, new LispReference(name, false, LispNullObject.INSTANCE));
         }
         return objects.get(name);
     }

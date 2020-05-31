@@ -100,19 +100,29 @@ public class LispContextTest {
         //  actually make string literals lol
         //  make println take multiple arguments? variadic arguments is not possible with FunctionInvokeNode checking against a single argument count, add IntPredicate?
         //  ^^^^ wait for lists
-        //  CHAR LITERALS AND STRING LITERALS FIRST AND FOREMOST THEN FIX LIBRARY LOADING
+        //  0) DELETE HACKY LIB PARSING CODE FOR NOW, REPL IS ENOUGH TO TEST THE FOLLOWING
+        //  1) CHAR LITERALS AND STRING LITERALS FIRST AND FOREMOST THEN FIX LIBRARY LOADING
+        //  2) CHAR AND STRING LITERALS REQUIRE TOKENIZER INTERVENTION TO PREVENT SPACE DELIMITING, THATS THE WHOLE POINT OF THE TOKENIZER
+        //  3) AFTTER CHAR/STRING LITERALS AND PARSING, LISTS
+        //  4) THEN AFTER LISTS MAKE COMPOUND OBJECTS
+        //  5) MAKE STANDARD LIBRARY A COMPOUND OBJECT
+        //  6) VERY IMPORTANT AUTOMATE FULLIMPORT ON LIBRARY TO """MERGE""" LIBRARY WITH LOCAL CONTEXT. HOW TO DEAL WITH CONFLICTS? REPLACE WITH LIB, REPLACE WITH LOCAL, OR THROW? THROW IS PROBABLY BEST IDEA
+        //  7) CHAR AND STRING LITERALS SHOULD NOT BE DISTINCT!
+        //  8) ADD QUOTED_LITERAL AS WELL, MODIFY AST PARSER TO BE "PARSELITERAL" INSTEAD OF "PARSEUNQUOTEDLITERAL"
 
-        run(context, "println");
-        run(context, "std.println");
+//        run(context, "println");
+//        run(context, "std.println");
+//        run(context, "(applylib std)");
+//        run(context, "println");
+//        run(context, "std.println");
+//        run(context, "(importlib std)");
+//        run(context, "println");
+//        run(context, "std.println");
+//
         run(context, "(applylib std)");
-        run(context, "println");
-        run(context, "std.println");
-        run(context, "(importlib std)");
-        run(context, "println");
-        run(context, "std.println");
-
-//        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
-//        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
+        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
+        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
+        run(context, "'hi'");
 
 //        run(context, "arg1");
 //        run(context, "(= arg1 5)");

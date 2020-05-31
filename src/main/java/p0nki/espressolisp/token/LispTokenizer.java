@@ -17,48 +17,70 @@ public class LispTokenizer {
         flushBuffer();
     }
 
-    private String buffer = "";
+    private StringBuffer buffer = new StringBuffer();
 
     private void flushBuffer() {
-        buffer = buffer.trim();
+        buffer = new StringBuffer(buffer.toString().trim());
         if (buffer.length() == 0) return;
-        tokens.add(new LispUnquotedLiteralToken(buffer, reader.getIndex() - buffer.length() - 1, reader.getIndex() - 1));
-        buffer = "";
+        tokens.add(new LispLiteralToken(buffer.toString(), reader.getIndex() - buffer.length() - 1, reader.getIndex() - 1));
+        buffer = new StringBuffer();
     }
 
     private void parse() {
+        boolean inQuote = false;
+        boolean isEscaped = false;
         while (reader.canRead()) {
             char ch = reader.next();
-            if (ch == ' ') {
-                flushBuffer();
-                continue;
+            if (inQuote) {
+                if (ch == '\\') {
+                    isEscaped = true;
+                }
+                if (ch == '\'' && !isEscaped) {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.QUOTE, reader.getIndex() - 1, reader.getIndex()));
+                    inQuote = false;
+                } else {
+                    buffer.append(ch);
+                }
+                if (ch != '\\' && isEscaped) isEscaped = false;
+            } else {
+                if (ch == ' ') {
+                    flushBuffer();
+                    continue;
+                }
+                if (ch == '(') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.LEFT_PAREN, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
+                if (ch == ')') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.RIGHT_PAREN, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
+                if (ch == '[') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.LEFT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
+                if (ch == ']') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.RIGHT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
+                if (ch == ',') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.COMMA, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
+                if (ch == '\'') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.QUOTE, reader.getIndex() - 1, reader.getIndex()));
+                    inQuote = true;
+                    continue;
+                }
+                buffer.append(ch);
             }
-            if (ch == '(') {
-                flushBuffer();
-                tokens.add(new LispToken(LispTokenType.LEFT_PAREN, reader.getIndex() - 1, reader.getIndex()));
-                continue;
-            }
-            if (ch == ')') {
-                flushBuffer();
-                tokens.add(new LispToken(LispTokenType.RIGHT_PAREN, reader.getIndex() - 1, reader.getIndex()));
-                continue;
-            }
-            if (ch == '[') {
-                flushBuffer();
-                tokens.add(new LispToken(LispTokenType.LEFT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
-                continue;
-            }
-            if (ch == ']') {
-                flushBuffer();
-                tokens.add(new LispToken(LispTokenType.RIGHT_BRACKET, reader.getIndex() - 1, reader.getIndex()));
-                continue;
-            }
-            if (ch == ',') {
-                flushBuffer();
-                tokens.add(new LispToken(LispTokenType.COMMA, reader.getIndex() - 1, reader.getIndex()));
-                continue;
-            }
-            buffer += ch;
         }
     }
 

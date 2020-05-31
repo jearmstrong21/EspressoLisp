@@ -50,7 +50,7 @@ public enum LispBuiltinLibrary implements LispLibrary {
             arg1 = arg1.get();
             arg2 = arg2.fullyDereference();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
-            LispVariableReference ref = (LispVariableReference) arg1;
+            LispReference ref = (LispReference) arg1;
             if (ctx.getParent().get().has(ref.getName())) {
                 ctx.getParent().get().get(ref.getName()).set(arg2);
             } else {
@@ -86,7 +86,7 @@ public enum LispBuiltinLibrary implements LispLibrary {
         context.set("isconst", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.get();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
-            return new LispBooleanLiteral(((LispVariableReference) arg1).isConstant());
+            return new LispBooleanLiteral(((LispReference) arg1).isConstant());
         }));
     }
 

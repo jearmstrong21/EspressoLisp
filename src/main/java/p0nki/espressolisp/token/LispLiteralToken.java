@@ -2,12 +2,12 @@ package p0nki.espressolisp.token;
 
 import java.util.Optional;
 
-public class LispUnquotedLiteralToken extends LispToken {
+public class LispLiteralToken extends LispToken {
 
     private final String value;
 
-    public LispUnquotedLiteralToken(String value, int startIndex, int endIndex) {
-        super(LispTokenType.UNQUOTED_LITERAL, startIndex, endIndex);
+    public LispLiteralToken(String value, int startIndex, int endIndex) {
+        super(LispTokenType.LITERAL, startIndex, endIndex);
         this.value = value;
     }
 

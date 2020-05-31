@@ -2,13 +2,13 @@ package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
 
-public class LispVariableReference extends LispObject implements LispLValue, LispRValue {
+public class LispReference extends LispObject implements LispLValue, LispRValue {
 
     private final String name;
     private boolean constant;
     private LispObject value;
 
-    public LispVariableReference(String name, boolean constant, LispObject value) {
+    public LispReference(String name, boolean constant, LispObject value) {
         this.name = name;
         this.constant = constant;
         this.value = value;

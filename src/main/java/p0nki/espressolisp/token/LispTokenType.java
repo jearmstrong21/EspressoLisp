@@ -7,6 +7,7 @@ public enum LispTokenType {
     LEFT_BRACKET,
     RIGHT_BRACKET,
     COMMA,
-    UNQUOTED_LITERAL
+    QUOTE,
+    LITERAL
 
 }

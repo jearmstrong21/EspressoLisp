@@ -3,7 +3,7 @@ package p0nki.espressolisp.tree;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispFunction;
 import p0nki.espressolisp.object.LispObject;
-import p0nki.espressolisp.object.LispVariableReference;
+import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
 
@@ -23,12 +23,12 @@ public class ListFunctionInvokeNode extends LispTreeNode {
 
     @Override
     public String toString() {
-        return "expression[" + name + ",\n" + args.stream().map(node -> node.debugStringify("\t")).collect(Collectors.joining("\n")) + "]";
+        return "invoke[" + name + ",\n" + args.stream().map(node -> node.debugStringify("\t")).collect(Collectors.joining("\n")) + "]";
     }
 
     @Override
     public String debugStringify(String indent) {
-        return indent + "expression[" + name + ",\n" + args.stream().map(node -> node.debugStringify("\t" + indent)).collect(Collectors.joining("\n")) + "\n" + indent + "]";
+        return indent + "invoke[" + name + ",\n" + args.stream().map(node -> node.debugStringify("\t" + indent)).collect(Collectors.joining("\n")) + "\n" + indent + "]";
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ListFunctionInvokeNode extends LispTreeNode {
         for (int i = 0; i < function.getArgNames().size(); i++) {
             LispObject obj = args.get(i).evaluate(context);
 //            System.out.println("ARG " + i + ": " + obj);
-            pushed.overwrite(function.getArgNames().get(i), new LispVariableReference(function.getArgNames().get(i), false, obj));
+            pushed.overwrite(function.getArgNames().get(i), new LispReference(function.getArgNames().get(i), false, obj));
         }
         return function.getTreeRoot().evaluate(pushed);
     }

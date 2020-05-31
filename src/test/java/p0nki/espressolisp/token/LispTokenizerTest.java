@@ -2,14 +2,16 @@ package p0nki.espressolisp.token;
 
 import org.junit.Test;
 
+import java.util.stream.Collectors;
+
 @SuppressWarnings("unused")
 public class LispTokenizerTest {
 
     @Test
     public void test() {
-//        String code = "(defn *3[x, y](+ y (* 5 x))) (*3 4 6) (* 3 4)";
+//        String code = "(= x 'hello [] () #=23 <=\\'world')";
 //        System.out.println(code);
-//        System.out.println(CLJTokenizer.tokenize(code).stream().map(RacketToken::toString).collect(Collectors.joining("\n")));
+//        System.out.println(LispTokenizer.tokenize(code).stream().map(LispToken::toString).collect(Collectors.joining("\n")));
     }
 
 }
