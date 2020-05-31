@@ -91,7 +91,6 @@ public class LispContextTest {
             arg2 = arg2.fullyDereference();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
             LispVariableReference ref = (LispVariableReference) arg1;
-            System.out.println(arg1 + " " + arg2);
             if (ctx.has(ref.getName())) {
                 ctx.get(ref.getName()).set(arg2);
             } else {
@@ -136,10 +135,10 @@ public class LispContextTest {
 
         run(context, "(= x 5)");
         run(context, "x");
-//        run(context, "(const x)");
-//        run(context, "x");
-//        run(context, "(= x 4)");
-//        run(context, "x");
+        run(context, "(const x)");
+        run(context, "x");
+        run(context, "(= x 4)");
+        run(context, "x");
 
         // TODO test `while` and `for` again, they have been rewritten
 
