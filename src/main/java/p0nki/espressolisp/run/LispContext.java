@@ -1,28 +1,67 @@
 package p0nki.espressolisp.run;
 
 import p0nki.espressolisp.exceptions.LispException;
+import p0nki.espressolisp.library.LispBuiltinLibrary;
+import p0nki.espressolisp.library.LispLibrary;
 import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.LispVariableReference;
 import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
+import p0nki.espressolisp.utils.LispLogger;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class LispContext {
 
     private final LispContext parent;
+    private final Map<String, LispLibrary> potentialLibraries;
+    private final List<String> loadedLibraries;
+    private final List<String> importedLibraries;
 
     private final Map<String, LispVariableReference> objects;
+    private final LispLogger logger;
 
-    public LispContext(LispContext parent) {
+    public LispContext(LispLogger logger, LispContext parent) throws LispException {
+        this.logger = logger;
         this.parent = parent;
         objects = new HashMap<>();
+        LispBuiltinLibrary.INSTANCE.load(this);
+
+        potentialLibraries = new HashMap<>();
+        potentialLibraries.put("builtin", LispBuiltinLibrary.INSTANCE);
+
+        loadedLibraries = new ArrayList<>();
+        loadedLibraries.add("builtin");
+
+        importedLibraries = new ArrayList<>();
+        importedLibraries.add("builtin");
     }
 
-    public void overwrite(String name, LispVariableReference ref){
+    public boolean hasLoaded(String name) {
+        return loadedLibraries.contains(name);
+    }
+
+    public void potentialLibrary(LispLibrary library) {
+        potentialLibraries.put(library.getName(), library);
+    }
+
+    public void importLibrary(String name) throws LispException {
+        if (!potentialLibraries.containsKey(name)) throw LispException.noLibraryWithName(name, null);
+        potentialLibraries.get(name).fullImport(this);
+    }
+
+    public void loadLibrary(String name) throws LispException {
+        if (!potentialLibraries.containsKey(name)) throw LispException.noLibraryWithName(name, null);
+        if (loadedLibraries.contains(name)) logger.warn("Re-importing library " + name);
+        potentialLibraries.get(name).load(this);
+    }
+
+    public LispLogger getLogger() {
+        return logger;
+    }
+
+    public void overwrite(String name, LispVariableReference ref) {
         objects.put(name, ref);
     }
 
@@ -36,13 +75,6 @@ public class LispContext {
         objects.remove(name);
     }
 
-    //    public boolean hasParent() {
-//        return parent != null;
-//    }
-//
-//    public LispContext getParent() {
-//        return parent;
-//    }
     public Optional<LispContext> getParent() {
         return Optional.ofNullable(parent);
     }
@@ -51,8 +83,8 @@ public class LispContext {
         return objects.containsKey(name);
     }
 
-    public LispContext push() {
-        LispContext ctx = new LispContext(this);
+    public LispContext push() throws LispException {
+        LispContext ctx = new LispContext(logger, this);
         for (String key : objects.keySet()) ctx.objects.put(key, objects.get(key));
         return ctx;
     }

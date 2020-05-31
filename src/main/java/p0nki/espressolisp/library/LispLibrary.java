@@ -6,7 +6,7 @@ import p0nki.espressolisp.run.LispContext;
 public interface LispLibrary {
 
     String getName();
-    void apply(LispContext context) throws LispException;
+    void load(LispContext context) throws LispException;
     void fullImport(LispContext context) throws LispException;
 
 }

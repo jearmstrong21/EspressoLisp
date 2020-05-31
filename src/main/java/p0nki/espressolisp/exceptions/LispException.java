@@ -17,6 +17,14 @@ public class LispException extends Exception {
         return new LispException("Unable to assign to constant " + name, token);
     }
 
+    public static LispException noLibraryWithName(String name, LispToken token) {
+        return new LispException("No library with name " + name, token);
+    }
+
+    public static LispException alreadyLoadedLibrary(String name, LispToken token) {
+        return new LispException("Already loaded library with name " + name, token);
+    }
+
     public static LispException unexpectedNull(LispToken token) {
         return new LispException("Unexpected null", token);
     }

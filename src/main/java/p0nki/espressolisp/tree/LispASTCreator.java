@@ -35,6 +35,7 @@ public class LispASTCreator {
     }
 
     // TODO make new nodes instead of instantiating classes inline
+    // TODO list literal, hardest part will be grammar for add / rem
 
     public static LispTreeNode parse(List<LispToken> tokens) throws LispException {
         LispToken first = tokens.get(0);
@@ -189,6 +190,50 @@ public class LispASTCreator {
                         }
                     };
                 }
+            } else if (op.getValue().equals("applylib")) {
+                LispUnquotedLiteralToken lib = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
+                expect(tokens, LispTokenType.RIGHT_PAREN);
+                return new LispTreeNode(op) {
+                    @Override
+                    public LispObject evaluate(LispContext context) throws LispException {
+                        context.loadLibrary(lib.getValue());
+                        return LispNullObject.INSTANCE;
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "applylib[" + lib.getValue() + "]";
+                    }
+                };
+            } else if (op.getValue().equals("islibloaded")) {
+                LispUnquotedLiteralToken lib = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
+                expect(tokens, LispTokenType.RIGHT_PAREN);
+                return new LispTreeNode(op) {
+                    @Override
+                    public LispObject evaluate(LispContext context) {
+                        return new LispBooleanLiteral(context.hasLoaded(lib.getValue()));
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "islibloaded[" + lib.getValue() + "]";
+                    }
+                };
+            } else if (op.getValue().equals("importlib")) {
+                LispUnquotedLiteralToken lib = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
+                expect(tokens, LispTokenType.RIGHT_PAREN);
+                return new LispTreeNode(op) {
+                    @Override
+                    public LispObject evaluate(LispContext context) throws LispException {
+                        context.importLibrary(lib.getValue());
+                        return LispNullObject.INSTANCE;
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "importlib[" + lib.getValue() + "]";
+                    }
+                };
             }
             List<LispTreeNode> children = new ArrayList<>();
             boolean ended = false;
