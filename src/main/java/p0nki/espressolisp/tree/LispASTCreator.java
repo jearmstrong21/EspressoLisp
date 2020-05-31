@@ -149,6 +149,46 @@ public class LispASTCreator {
                         return "const[" + literal.getValue() + "]";
                     }
                 };
+            } else if (op.getValue().equals("if")) {
+                LispTreeNode condition = parse(tokens);
+                LispTreeNode then = parse(tokens);
+                LispToken nextToken = tokens.get(0);
+                if (nextToken.getType() != LispTokenType.RIGHT_PAREN) {
+                    LispTreeNode otherwise = parse(tokens);
+                    expect(tokens, LispTokenType.RIGHT_PAREN);
+                    return new LispTreeNode(op) {
+                        @Override
+                        public LispObject evaluate(LispContext context) throws LispException {
+                            if (condition.evaluate(context).fullyDereference().asBoolean().getValue()) {
+                                return then.evaluate(context.push());
+                            } else {
+                                return otherwise.evaluate(context.push());
+                            }
+                        }
+
+                        @Override
+                        public String debugStringify(String indent) {
+                            return "ifelse";
+                        }
+                    };
+                } else {
+                    expect(tokens, LispTokenType.RIGHT_PAREN);
+                    return new LispTreeNode(op) {
+                        @Override
+                        public LispObject evaluate(LispContext context) throws LispException {
+                            if (condition.evaluate(context).fullyDereference().asBoolean().getValue()) {
+                                return then.evaluate(context.push());
+                            } else {
+                                return LispNullObject.INSTANCE;
+                            }
+                        }
+
+                        @Override
+                        public String debugStringify(String indent) {
+                            return "if";
+                        }
+                    };
+                }
             }
             List<LispTreeNode> children = new ArrayList<>();
             boolean ended = false;

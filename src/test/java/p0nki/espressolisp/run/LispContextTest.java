@@ -116,6 +116,11 @@ public class LispContextTest {
                 throw LispException.unexpectedNull(null);
             return new LispBooleanLiteral(arg1.asNumber().getValue() < arg2.asNumber().getValue());
         })).makeConstant();
+        context.set("isconst", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
+            arg1 = arg1.get();
+            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
+            return new LispBooleanLiteral(((LispVariableReference) arg1).isConstant());
+        }));
 
         context.set("std.randf", new LispCompleteFunction(new ArrayList<>(), (parentContext, args) -> new LispNumberLiteral(Math.random()))).makeConstant();
         context.set("std.randb", new LispCompleteFunction(new ArrayList<>(), (parentContext, args) -> new LispBooleanLiteral(Math.random() < 0.5))).makeConstant();
@@ -133,14 +138,25 @@ public class LispContextTest {
 //        run(context, "y");
 //        run(context, "(= null x)");
 
-        run(context, "(= x 5)");
-        run(context, "x");
-        run(context, "(= x 3)");
-        run(context, "x");
-        run(context, "(const x)");
-        run(context, "x");
-        run(context, "(= x 4)");
-        run(context, "x");
+//        run(context, "(= x 5)");
+//        run(context, "x");
+//        run(context, "(= x 3)");
+//        run(context, "x");
+//        run(context, "(const x)");
+//        run(context, "x");
+//        run(context, "(if (isconst x) 1 0)");
+//        run(context, "(std.println (if (isconst x) 1 0))");
+
+        run(context, "(= iterations 1000)");
+        run(context, "(const iterations)");
+        run(context, "(= sum 0)");
+        run(context, "(= count (/ iterations 2))");
+        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (= sum (+ sum (std.randf))))");
+        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (if (< (std.randf) 0.5) (= count (inc count)) (= count (dec count))))");
+        run(context, "(std.println iterations)");
+        run(context, "(std.println sum)");
+        run(context, "(std.println (/ sum iterations))");
+        run(context, "(std.println count)");
 
         // TODO test `while` and `for` again, they have been rewritten
 
