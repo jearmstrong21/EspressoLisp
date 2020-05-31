@@ -48,11 +48,6 @@ public class LispContext {
 
     public void importLibrary(String name) throws LispException {
         if (!potentialLibraries.containsKey(name)) throw LispException.noLibraryWithName(name, null);
-        potentialLibraries.get(name).fullImport(this);
-    }
-
-    public void loadLibrary(String name) throws LispException {
-        if (!potentialLibraries.containsKey(name)) throw LispException.noLibraryWithName(name, null);
         if (loadedLibraries.contains(name)) logger.warn("Re-importing library " + name);
         potentialLibraries.get(name).load(this);
     }

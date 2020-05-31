@@ -4,8 +4,9 @@ import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
+import p0nki.espressolisp.utils.ToDebugJSON;
 
-public abstract class LispTreeNode {
+public abstract class LispTreeNode implements ToDebugJSON {
 
     private final LispToken token;
 
@@ -13,8 +14,10 @@ public abstract class LispTreeNode {
         this.token = token;
     }
 
-    public abstract LispObject evaluate(LispContext context) throws LispException;
+    public LispToken getToken() {
+        return token;
+    }
 
-    public abstract String debugStringify(String indent);
+    public abstract LispObject evaluate(LispContext context) throws LispException;
 
 }

@@ -1,5 +1,7 @@
 package p0nki.espressolisp.object;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.function.LispFunctionalInterface;
 import p0nki.espressolisp.run.LispContext;
@@ -22,9 +24,12 @@ public class LispCompleteFunction extends LispFunction {
             }
 
             @Override
-            public String debugStringify(String indent) {
-                return indent + "function";
+            public JSONObject toDebugJSON() throws JSONException {
+                return new JSONObject()
+                        .put("type", "completefunction")
+                        .put("argNames", argNames);
             }
+
         });
     }
 

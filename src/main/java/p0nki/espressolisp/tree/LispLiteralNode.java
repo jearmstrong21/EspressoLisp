@@ -1,8 +1,11 @@
 package p0nki.espressolisp.tree;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
+import p0nki.espressolisp.utils.ToDebugJSON;
 
 public class LispLiteralNode extends LispTreeNode {
 
@@ -18,17 +21,14 @@ public class LispLiteralNode extends LispTreeNode {
     }
 
     @Override
-    public String toString() {
-        return "literal[" + value + "]";
-    }
-
-    @Override
     public LispObject evaluate(LispContext context) {
         return value;
     }
 
     @Override
-    public String debugStringify(String indent) {
-        return indent + toString();
+    public JSONObject toDebugJSON() throws JSONException {
+        return new JSONObject()
+                .put("type", "literal")
+                .put("value", value instanceof ToDebugJSON ? ((ToDebugJSON) value).toDebugJSON() : value);
     }
 }

@@ -8,30 +8,25 @@ import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
 
-public class LispWhileNode extends LispTreeNode {
+public class LispDelNode extends LispTreeNode {
 
-    private final LispTreeNode condition;
-    private final LispTreeNode body;
+    private final String name;
 
-    public LispWhileNode(LispTreeNode condition, LispTreeNode body, LispToken token) {
+    public LispDelNode(String name, LispToken token) {
         super(token);
-        this.condition = condition;
-        this.body = body;
+        this.name = name;
     }
 
     @Override
     public LispObject evaluate(LispContext context) throws LispException {
-        while (condition.evaluate(context).asBoolean().getValue()) {
-            body.evaluate(context.push());
-        }
+        context.delete(name);
         return LispNullObject.INSTANCE;
     }
 
     @Override
     public JSONObject toDebugJSON() throws JSONException {
         return new JSONObject()
-                .put("type", "while")
-                .put("condition", condition.toDebugJSON())
-                .put("body", body.toDebugJSON());
+                .put("type", "del")
+                .put("name", name);
     }
 }

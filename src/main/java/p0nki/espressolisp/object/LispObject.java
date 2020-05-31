@@ -31,4 +31,9 @@ public abstract class LispObject implements LispRValue {
         throw LispException.invalidType("function", getType(), null);
     }
 
+    public final LispReference asReference() throws LispException {
+        if (this instanceof LispReference) return (LispReference) this;
+        throw LispException.invalidType("ref", getType(), null);
+    }
+
 }

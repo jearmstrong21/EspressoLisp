@@ -1,5 +1,8 @@
 package p0nki.espressolisp.tree;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispFunction;
 import p0nki.espressolisp.object.LispObject;
@@ -8,27 +11,33 @@ import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class ListFunctionInvokeNode extends LispTreeNode {
+public class LispInvokeNode extends LispTreeNode {
 
     private final String name;
     private final List<LispTreeNode> args;
 
-    public ListFunctionInvokeNode(String name, List<LispTreeNode> args, LispToken token) {
+    public LispInvokeNode(String name, List<LispTreeNode> args, LispToken token) {
         super(token);
         this.name = name;
         this.args = args;
     }
 
     @Override
-    public String toString() {
-        return "invoke[" + name + ",\n" + args.stream().map(node -> node.debugStringify("\t")).collect(Collectors.joining("\n")) + "]";
-    }
-
-    @Override
-    public String debugStringify(String indent) {
-        return indent + "invoke[" + name + ",\n" + args.stream().map(node -> node.debugStringify("\t" + indent)).collect(Collectors.joining("\n")) + "\n" + indent + "]";
+    public JSONObject toDebugJSON() throws JSONException {
+        JSONArray arr = new JSONArray();
+        args.forEach(node -> {
+            try {
+                arr.put(node.toDebugJSON());
+            } catch (JSONException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
+        return new JSONObject()
+                .put("type", "invoke")
+                .put("name", name)
+                .put("args", arr);
     }
 
     @Override

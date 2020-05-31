@@ -2,14 +2,18 @@ package p0nki.espressolisp.run;
 
 import org.junit.Test;
 import p0nki.espressolisp.exceptions.LispException;
+import p0nki.espressolisp.function.LispMonadAdapter;
 import p0nki.espressolisp.library.LispMathLibrary;
 import p0nki.espressolisp.library.LispStandardLibrary;
+import p0nki.espressolisp.object.LispCompleteFunction;
+import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.LispStandardLogger;
+import p0nki.espressolisp.utils.Utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,19 +114,15 @@ public class LispContextTest {
         //  7) CHAR AND STRING LITERALS SHOULD NOT BE DISTINCT!
         //  8) ADD QUOTED_LITERAL AS WELL, MODIFY AST PARSER TO BE "PARSELITERAL" INSTEAD OF "PARSEUNQUOTEDLITERAL"
 
-//        run(context, "println");
 //        run(context, "std.println");
-//        run(context, "(applylib std)");
-//        run(context, "println");
-//        run(context, "std.println");
-//        run(context, "(importlib std)");
-//        run(context, "println");
+//        run(context, "(import std)");
 //        run(context, "std.println");
 //
-        run(context, "(applylib std)");
+        run(context, "(import std)");
         run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
         run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
-        run(context, "'hi'");
+        run(context, "(= fib (func [n] (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
+        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (fib i)))");
 
 //        run(context, "arg1");
 //        run(context, "(= arg1 5)");

@@ -1,5 +1,7 @@
 package p0nki.espressolisp.tree;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispObject;
@@ -32,7 +34,12 @@ public class LispForNode extends LispTreeNode {
     }
 
     @Override
-    public String debugStringify(String indent) {
-        return "for"; // TODO actually stringify everything probably
+    public JSONObject toDebugJSON() throws JSONException {
+        return new JSONObject()
+                .put("type", "for")
+                .put("initialization", initialization.toDebugJSON())
+                .put("condition", condition.toDebugJSON())
+                .put("increment", increment.toDebugJSON())
+                .put("body", body.toDebugJSON());
     }
 }

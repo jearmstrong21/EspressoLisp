@@ -1,5 +1,7 @@
 package p0nki.espressolisp.tree;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
@@ -24,12 +26,9 @@ public class LispReferenceNode extends LispTreeNode {
     }
 
     @Override
-    public String toString() {
-        return "variable[" + name + "]";
-    }
-
-    @Override
-    public String debugStringify(String indent) {
-        return indent + toString();
+    public JSONObject toDebugJSON() throws JSONException {
+        return new JSONObject()
+                .put("type","ref")
+                .put("name", name);
     }
 }

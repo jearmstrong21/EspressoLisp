@@ -86,7 +86,19 @@ public enum LispBuiltinLibrary implements LispLibrary {
         context.set("isconst", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.get();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
-            return new LispBooleanLiteral(((LispReference) arg1).isConstant());
+            return new LispBooleanLiteral(arg1.asReference().isConstant());
+        }));
+        context.set("const", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
+            arg1 = arg1.get();
+            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
+            arg1.asReference().makeConstant();
+            return LispNullObject.INSTANCE;
+        })).makeConstant();
+        context.set("import", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
+            arg1 = arg1.get();
+            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
+            parentContext.getParent().get().importLibrary(arg1.asReference().getName());
+            return LispNullObject.INSTANCE;
         }));
     }
 

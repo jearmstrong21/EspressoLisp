@@ -2,7 +2,6 @@ package p0nki.espressolisp.tree;
 
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.*;
-import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispLiteralToken;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
@@ -84,34 +83,7 @@ public class LispASTCreator {
             } else if (op.getValue().equals("del")) {
                 LispLiteralToken literal = expect(tokens, LispTokenType.LITERAL);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode(op) {
-                    @Override
-                    public LispObject evaluate(LispContext context) throws LispException {
-                        context.delete(literal.getValue());
-                        return LispNullObject.INSTANCE;
-                    }
-
-                    @Override
-                    public String debugStringify(String indent) {
-                        return "del[" + literal.getValue() + "]";
-                    }
-                };
-            } else if (op.getValue().equals("const")) {
-                LispLiteralToken literal = expect(tokens, LispTokenType.LITERAL);
-                expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode(op) {
-                    @Override
-                    public LispObject evaluate(LispContext context) throws LispException {
-                        LispReference ref = context.get(literal.getValue());
-                        ref.makeConstant();
-                        return LispNullObject.INSTANCE;
-                    }
-
-                    @Override
-                    public String debugStringify(String indent) {
-                        return "const[" + literal.getValue() + "]";
-                    }
-                };
+                return new LispDelNode(literal.getValue(), op);
             } else if (op.getValue().equals("if")) {
                 LispTreeNode condition = parse(tokens);
                 LispTreeNode then = parse(tokens);
@@ -124,51 +96,80 @@ public class LispASTCreator {
                     expect(tokens, LispTokenType.RIGHT_PAREN);
                     return new LispIfNode(condition, then, new LispLiteralNode(LispNullObject.INSTANCE, op), op);
                 }
-            } else if (op.getValue().equals("applylib")) {
-                LispLiteralToken lib = expect(tokens, LispTokenType.LITERAL);
-                expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode(op) {
-                    @Override
-                    public LispObject evaluate(LispContext context) throws LispException {
-                        context.loadLibrary(lib.getValue());
-                        return LispNullObject.INSTANCE;
-                    }
-
-                    @Override
-                    public String debugStringify(String indent) {
-                        return "applylib[" + lib.getValue() + "]";
-                    }
-                };
-            } else if (op.getValue().equals("islibloaded")) {// TODO make all lib functions builtins instead of special parse cases
-                LispLiteralToken lib = expect(tokens, LispTokenType.LITERAL);
-                expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode(op) {
-                    @Override
-                    public LispObject evaluate(LispContext context) {
-                        return new LispBooleanLiteral(context.hasLoaded(lib.getValue()));
-                    }
-
-                    @Override
-                    public String debugStringify(String indent) {
-                        return "islibloaded[" + lib.getValue() + "]";
-                    }
-                };
-            } else if (op.getValue().equals("importlib")) {
-                LispLiteralToken lib = expect(tokens, LispTokenType.LITERAL);
-                expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode(op) {
-                    @Override
-                    public LispObject evaluate(LispContext context) throws LispException {
-                        context.importLibrary(lib.getValue());
-                        return LispNullObject.INSTANCE;
-                    }
-
-                    @Override
-                    public String debugStringify(String indent) {
-                        return "importlib[" + lib.getValue() + "]";
-                    }
-                };
             }
+//            else if (op.getValue().equals("const")) {
+//                LispLiteralToken literal = expect(tokens, LispTokenType.LITERAL);
+//                expect(tokens, LispTokenType.RIGHT_PAREN);
+//                return new LispTreeNode(op) {
+//                    @Override
+//                    public LispObject evaluate(LispContext context) throws LispException {
+//                        LispReference ref = context.get(literal.getValue());
+//                        ref.makeConstant();
+//                        return LispNullObject.INSTANCE;
+//                    }
+//
+//                    @Override
+//                    public String debugStringify(String indent) {
+//                        return "const[" + literal.getValue() + "]";
+//                    }
+//                };
+//            } else if (op.getValue().equals("if")) {
+//                LispTreeNode condition = parse(tokens);
+//                LispTreeNode then = parse(tokens);
+//                LispToken nextToken = tokens.get(0);
+//                if (nextToken.getType() != LispTokenType.RIGHT_PAREN) {
+//                    LispTreeNode otherwise = parse(tokens);
+//                    expect(tokens, LispTokenType.RIGHT_PAREN);
+//                    return new LispIfNode(condition, then, otherwise, op);
+//                } else {
+//                    expect(tokens, LispTokenType.RIGHT_PAREN);
+//                    return new LispIfNode(condition, then, new LispLiteralNode(LispNullObject.INSTANCE, op), op);
+//                }
+//            } else if (op.getValue().equals("applylib")) {
+//                LispLiteralToken lib = expect(tokens, LispTokenType.LITERAL);
+//                expect(tokens, LispTokenType.RIGHT_PAREN);
+//                return new LispTreeNode(op) {
+//                    @Override
+//                    public LispObject evaluate(LispContext context) throws LispException {
+//                        context.loadLibrary(lib.getValue());
+//                        return LispNullObject.INSTANCE;
+//                    }
+//
+//                    @Override
+//                    public String debugStringify(String indent) {
+//                        return "applylib[" + lib.getValue() + "]";
+//                    }
+//                };
+//            } else if (op.getValue().equals("islibloaded")) {// TODO make all lib functions builtins instead of special parse cases
+//                LispLiteralToken lib = expect(tokens, LispTokenType.LITERAL);
+//                expect(tokens, LispTokenType.RIGHT_PAREN);
+//                return new LispTreeNode(op) {
+//                    @Override
+//                    public LispObject evaluate(LispContext context) {
+//                        return new LispBooleanLiteral(context.hasLoaded(lib.getValue()));
+//                    }
+//
+//                    @Override
+//                    public String debugStringify(String indent) {
+//                        return "islibloaded[" + lib.getValue() + "]";
+//                    }
+//                };
+//            } else if (op.getValue().equals("importlib")) {
+//                LispLiteralToken lib = expect(tokens, LispTokenType.LITERAL);
+//                expect(tokens, LispTokenType.RIGHT_PAREN);
+//                return new LispTreeNode(op) {
+//                    @Override
+//                    public LispObject evaluate(LispContext context) throws LispException {
+//                        context.importLibrary(lib.getValue());
+//                        return LispNullObject.INSTANCE;
+//                    }
+//
+//                    @Override
+//                    public String debugStringify(String indent) {
+//                        return "importlib[" + lib.getValue() + "]";
+//                    }
+//                };
+//            }
             List<LispTreeNode> children = new ArrayList<>();
             boolean ended = false;
             for (int i = 0; i < 1000; i++) {
@@ -181,7 +182,7 @@ public class LispASTCreator {
             }
             if (!ended) throw LispException.tooManyArguments(op);
             expect(tokens, LispTokenType.RIGHT_PAREN);
-            return new ListFunctionInvokeNode(op.getValue(), children, op);
+            return new LispInvokeNode(op.getValue(), children, op);
         } else if (first.getType() == LispTokenType.LITERAL) {
             LispLiteralToken literal = expect(tokens, LispTokenType.LITERAL);
             if (literal.getNumber().isPresent())

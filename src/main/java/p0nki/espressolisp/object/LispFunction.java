@@ -1,11 +1,14 @@
 package p0nki.espressolisp.object;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.tree.LispTreeNode;
+import p0nki.espressolisp.utils.ToDebugJSON;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class LispFunction extends LispLiteral {
+public class LispFunction extends LispLiteral implements ToDebugJSON {
 
     private final List<String> argNames;
     private final LispTreeNode treeRoot;
@@ -26,6 +29,16 @@ public class LispFunction extends LispLiteral {
     @Override
     public String toString() {
         return "function[" + String.join(",", argNames) + "]";
+    }
+
+    @Override
+    public JSONObject toDebugJSON() throws JSONException {
+        JSONArray args = new JSONArray();
+        argNames.forEach(args::put);
+        return new JSONObject()
+                .put("type", "function")
+                .put("args", args)
+                .put("body", treeRoot.toDebugJSON());
     }
 
     @Override

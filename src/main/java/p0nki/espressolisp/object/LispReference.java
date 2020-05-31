@@ -2,7 +2,7 @@ package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
 
-public class LispReference extends LispObject implements LispLValue, LispRValue {
+public class LispReference extends LispObject implements LispRValue {
 
     private final String name;
     private boolean constant;
@@ -41,7 +41,6 @@ public class LispReference extends LispObject implements LispLValue, LispRValue 
         return true;
     }
 
-    @Override
     public void set(LispObject newValue) throws LispException {
         if (constant) throw LispException.unableToAssignToConstant(name, null);
         value = newValue.get();
