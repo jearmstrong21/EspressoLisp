@@ -5,16 +5,18 @@ import p0nki.espressolisp.object.LispFunction;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.LispVariableReference;
 import p0nki.espressolisp.run.LispContext;
+import p0nki.espressolisp.token.LispToken;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ListFunctionInvokeNode implements LispTreeNode {
+public class ListFunctionInvokeNode extends LispTreeNode {
 
     private final String name;
     private final List<LispTreeNode> args;
 
-    public ListFunctionInvokeNode(String name, List<LispTreeNode> args) {
+    public ListFunctionInvokeNode(String name, List<LispTreeNode> args, LispToken token) {
+        super(token);
         this.name = name;
         this.args = args;
     }

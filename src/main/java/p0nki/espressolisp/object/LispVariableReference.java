@@ -28,7 +28,7 @@ public class LispVariableReference extends LispObject implements LispLValue, Lis
 
     @Override
     public String toString() {
-        return "ref[" + name + "]";
+        return (constant ? "const" : "") + "ref[" + name + "]";
     }
 
     @Override

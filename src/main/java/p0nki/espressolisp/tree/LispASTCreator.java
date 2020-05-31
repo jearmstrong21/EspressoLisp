@@ -27,19 +27,22 @@ public class LispASTCreator {
 
     public static LispTreeNode parseUnquotedLiteral(LispUnquotedLiteralToken token) {
         Optional<Double> number = token.getNumber();
-        if (number.isPresent()) return new LispLiteralNode(new LispNumberLiteral(number.get()));
+        if (number.isPresent()) return new LispLiteralNode(new LispNumberLiteral(number.get()), token);
         Optional<Boolean> bool = token.getBoolean();
-        if (bool.isPresent()) return new LispLiteralNode(new LispBooleanLiteral(bool.get()));
-        if (token.getNull()) return new LispLiteralNode(LispNullObject.INSTANCE);
-        return new LispVariableNode(token.getValue());
+        if (bool.isPresent()) return new LispLiteralNode(new LispBooleanLiteral(bool.get()), token);
+        if (token.getNull()) return new LispLiteralNode(LispNullObject.INSTANCE, token);
+        return new LispVariableNode(token.getValue(), token);
     }
+
+    // TODO make new nodes instead of instantiating them inline
 
     public static LispTreeNode parse(List<LispToken> tokens) throws LispException {
         LispToken first = tokens.get(0);
         if (first.getType() == LispTokenType.LEFT_PAREN) {
             tokens.remove(0);
             LispToken second = tokens.remove(0);
-            if (second.getType() == LispTokenType.RIGHT_PAREN) return new LispLiteralNode(LispNullObject.INSTANCE);
+            if (second.getType() == LispTokenType.RIGHT_PAREN)
+                return new LispLiteralNode(LispNullObject.INSTANCE, second);
             if (second.getType() != LispTokenType.UNQUOTED_LITERAL)
                 throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.LEFT_PAREN, second);
             LispUnquotedLiteralToken op = (LispUnquotedLiteralToken) second;
@@ -74,14 +77,14 @@ public class LispASTCreator {
                 }
                 LispTreeNode treeNode = parse(tokens);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispLiteralNode(new LispFunction(argNames, treeNode));
+                return new LispLiteralNode(new LispFunction(argNames, treeNode), op);
             } else if (op.getValue().equals("for")) {
                 LispTreeNode initialize = parse(tokens);
                 LispTreeNode condition = parse(tokens);
                 LispTreeNode increment = parse(tokens);
                 LispTreeNode body = parse(tokens);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode() {
+                return new LispTreeNode(op) {
                     @Override
                     public LispObject evaluate(LispContext context) throws LispException {
                         initialize.evaluate(context);
@@ -101,7 +104,7 @@ public class LispASTCreator {
                 LispTreeNode condition = parse(tokens);
                 LispTreeNode body = parse(tokens);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode() {
+                return new LispTreeNode(op) {
                     @Override
                     public LispObject evaluate(LispContext context) throws LispException {
                         while (condition.evaluate(context).asBoolean().getValue()) {
@@ -118,7 +121,7 @@ public class LispASTCreator {
             } else if (op.getValue().equals("del")) {
                 LispUnquotedLiteralToken literal = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode() {
+                return new LispTreeNode(op) {
                     @Override
                     public LispObject evaluate(LispContext context) throws LispException {
                         context.delete(literal.getValue());
@@ -133,7 +136,7 @@ public class LispASTCreator {
             } else if (op.getValue().equals("const")) {
                 LispUnquotedLiteralToken literal = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispTreeNode() {
+                return new LispTreeNode(op) {
                     @Override
                     public LispObject evaluate(LispContext context) throws LispException {
                         LispVariableReference ref = context.get(literal.getValue());
@@ -165,7 +168,7 @@ public class LispASTCreator {
             }
             if (!ended) throw LispException.tooManyArguments(op);
             expect(tokens, LispTokenType.RIGHT_PAREN);
-            return new ListFunctionInvokeNode(op.getValue(), children);
+            return new ListFunctionInvokeNode(op.getValue(), children, op);
         } else if (first.getType() == LispTokenType.UNQUOTED_LITERAL) {
             return parseUnquotedLiteral((LispUnquotedLiteralToken) tokens.remove(0));
         } else {

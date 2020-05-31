@@ -33,8 +33,8 @@ public class LispContextTest {
                 System.out.println();
             } catch (LispException exc) {
                 if (exc.getToken() == null) {
-                    System.out.println(exc.getMessage());
                     System.out.println("-- Runtime error --");
+                    System.out.println(exc.getMessage());
                 } else {
                     int start = exc.getToken().getStartIndex();
                     int end = exc.getToken().getEndIndex();
@@ -134,6 +134,8 @@ public class LispContextTest {
 //        run(context, "(= null x)");
 
         run(context, "(= x 5)");
+        run(context, "x");
+        run(context, "(= x 3)");
         run(context, "x");
         run(context, "(const x)");
         run(context, "x");

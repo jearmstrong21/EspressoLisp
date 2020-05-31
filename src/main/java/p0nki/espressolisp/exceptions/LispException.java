@@ -10,6 +10,7 @@ public class LispException extends Exception {
     private LispException(String message, LispToken token) {
         super(message);
         this.token = token;
+//        if (token == null) System.out.println("NULL TOKEN " + message);
     }
 
     public static LispException unableToAssignToConstant(String name, LispToken token) {

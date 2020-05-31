@@ -11,7 +11,7 @@ import java.util.List;
 public class LispCompleteFunction extends LispFunction {
 
     public LispCompleteFunction(List<String> argNames, LispFunctionalInterface function) {
-        super(argNames, new LispTreeNode() {
+        super(argNames, new LispTreeNode(null) {
             @Override
             public LispObject evaluate(LispContext context) throws LispException {
                 List<LispObject> args = new ArrayList<>();

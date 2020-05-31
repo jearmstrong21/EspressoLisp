@@ -2,12 +2,14 @@ package p0nki.espressolisp.tree;
 
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
+import p0nki.espressolisp.token.LispToken;
 
-public class LispLiteralNode implements LispTreeNode {
+public class LispLiteralNode extends LispTreeNode {
 
     private final LispObject value;
 
-    public LispLiteralNode(LispObject value) {
+    public LispLiteralNode(LispObject value, LispToken token) {
+        super(token);
         this.value = value;
     }
 
