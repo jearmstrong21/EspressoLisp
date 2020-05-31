@@ -34,7 +34,7 @@ public class LispASTCreator {
         return new LispVariableNode(token.getValue(), token);
     }
 
-    // TODO make new nodes instead of instantiating them inline
+    // TODO make new nodes instead of instantiating classes inline
 
     public static LispTreeNode parse(List<LispToken> tokens) throws LispException {
         LispToken first = tokens.get(0);
@@ -46,7 +46,7 @@ public class LispASTCreator {
             if (second.getType() != LispTokenType.UNQUOTED_LITERAL)
                 throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.LEFT_PAREN, second);
             LispUnquotedLiteralToken op = (LispUnquotedLiteralToken) second;
-            if (op.getValue().equals("func")) { // FUNCTION DECLARATION
+            if (op.getValue().equals("func")) {
                 LispToken leftBracket = expect(tokens, LispTokenType.LEFT_BRACKET);
                 List<String> argNames = new ArrayList<>();
                 boolean lookingForComma = false;

@@ -87,19 +87,27 @@ public class LispContextTest {
                 throw LispException.unexpectedNull(null);
             return new LispNumberLiteral(arg1.asNumber().getValue() / arg2.asNumber().getValue());
         })).makeConstant();
+
+
+
+
         context.set("=", new LispCompleteFunction(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.get();
             arg2 = arg2.fullyDereference();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
             LispVariableReference ref = (LispVariableReference) arg1;
-            if (ctx.has(ref.getName())) {
-                ctx.get(ref.getName()).set(arg2);
+            if (ctx.getParent().get().has(ref.getName())) {
+                ctx.getParent().get().get(ref.getName()).set(arg2);
             } else {
                 ref.set(arg2);
                 if (ctx.getParent().isPresent()) ctx.getParent().get().set(ref.getName(), ref);
             }
             return arg2;
         })).makeConstant();
+
+
+
+
         context.set("inc", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.fullyDereference();
             if (arg1 == LispNullObject.INSTANCE) throw LispException.unexpectedNull(null);
@@ -155,6 +163,11 @@ public class LispContextTest {
 //        run(context, "(if (isconst x) 1 0)");
 //        run(context, "(std.println (if (isconst x) 1 0))");
 
+        run(context, "null");
+        run(context, "NaN");
+        run(context, "(+ 5 NaN)");
+        run(context, "(+ 5 null)");
+
 //        run(context, "(= iterations 1000)");
 //        run(context, "(const iterations)");
 //        run(context, "(= sum 0)");
@@ -166,8 +179,12 @@ public class LispContextTest {
 //        run(context, "(std.println (/ sum iterations))");
 //        run(context, "(std.println count)");
 
-        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
-        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
+//        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
+//        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
+
+//        run(context, "arg1");
+//        run(context, "(= arg1 5)");
+//        run(context, "arg1");
 
         // TODO test `while` and `for` again, they have been rewritten
 
