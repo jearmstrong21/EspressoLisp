@@ -22,14 +22,11 @@ public class LispContext {
         objects = new HashMap<>();
     }
 
+    public void overwrite(String name, LispVariableReference ref){
+        objects.put(name, ref);
+    }
+
     public LispVariableReference set(String name, LispObject obj) throws LispException {
-//        if(has(name)) {
-//            LispVariableReference ref = get(name);
-//            ref.set(obj);
-//        }
-//        LispVariableReference ref = new LispVariableReference(name, false, obj);
-//        objects.put(name, ref);
-//        return ref;
         get(name).set(obj);
         return get(name);
     }

@@ -42,7 +42,8 @@ public class ListFunctionInvokeNode extends LispTreeNode {
         LispContext pushed = context.push();
         for (int i = 0; i < function.getArgNames().size(); i++) {
             LispObject obj = args.get(i).evaluate(context);
-            pushed.set(function.getArgNames().get(i), new LispVariableReference(function.getArgNames().get(i), false, obj));
+//            System.out.println("ARG " + i + ": " + obj);
+            pushed.overwrite(function.getArgNames().get(i), new LispVariableReference(function.getArgNames().get(i), false, obj));
         }
         return function.getTreeRoot().evaluate(pushed);
     }

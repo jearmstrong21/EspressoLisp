@@ -24,6 +24,7 @@ public class LispContextTest {
         while (tokens.size() > 0) {
             try {
                 LispTreeNode tree = LispASTCreator.parse(tokens);
+//                System.out.println(tree.debugStringify(""));
                 LispObject res = tree.evaluate(context);
                 System.out.print("=> " + res);
                 while (res.isLValue()) {
@@ -116,6 +117,13 @@ public class LispContextTest {
                 throw LispException.unexpectedNull(null);
             return new LispBooleanLiteral(arg1.asNumber().getValue() < arg2.asNumber().getValue());
         })).makeConstant();
+        context.set(">", new LispCompleteFunction(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+            arg1 = arg1.fullyDereference();
+            arg2 = arg2.fullyDereference();
+            if (arg1 == LispNullObject.INSTANCE || arg2 == LispNullObject.INSTANCE)
+                throw LispException.unexpectedNull(null);
+            return new LispBooleanLiteral(arg1.asNumber().getValue() > arg2.asNumber().getValue());
+        })).makeConstant();
         context.set("isconst", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.get();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
@@ -147,16 +155,19 @@ public class LispContextTest {
 //        run(context, "(if (isconst x) 1 0)");
 //        run(context, "(std.println (if (isconst x) 1 0))");
 
-        run(context, "(= iterations 1000)");
-        run(context, "(const iterations)");
-        run(context, "(= sum 0)");
-        run(context, "(= count (/ iterations 2))");
-        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (= sum (+ sum (std.randf))))");
-        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (if (< (std.randf) 0.5) (= count (inc count)) (= count (dec count))))");
-        run(context, "(std.println iterations)");
-        run(context, "(std.println sum)");
-        run(context, "(std.println (/ sum iterations))");
-        run(context, "(std.println count)");
+//        run(context, "(= iterations 1000)");
+//        run(context, "(const iterations)");
+//        run(context, "(= sum 0)");
+//        run(context, "(= count (/ iterations 2))");
+//        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (= sum (+ sum (std.randf))))");
+//        run(context, "(for (= i 0) (< i iterations) (= i (inc i)) (if (< (std.randf) 0.5) (= count (inc count)) (= count (dec count))))");
+//        run(context, "(std.println iterations)");
+//        run(context, "(std.println sum)");
+//        run(context, "(std.println (/ sum iterations))");
+//        run(context, "(std.println count)");
+
+        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
+        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
 
         // TODO test `while` and `for` again, they have been rewritten
 
