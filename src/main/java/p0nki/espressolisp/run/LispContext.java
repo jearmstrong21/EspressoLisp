@@ -9,6 +9,7 @@ import p0nki.espressolisp.tree.LispASTCreator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class LispContext {
 
@@ -21,12 +22,36 @@ public class LispContext {
         objects = new HashMap<>();
     }
 
-    public boolean hasParent() {
-        return parent != null;
+    public LispVariableReference set(String name, LispObject obj) throws LispException {
+//        if(has(name)) {
+//            LispVariableReference ref = get(name);
+//            ref.set(obj);
+//        }
+//        LispVariableReference ref = new LispVariableReference(name, false, obj);
+//        objects.put(name, ref);
+//        return ref;
+        get(name).set(obj);
+        return get(name);
     }
 
-    public LispContext getParent() {
-        return parent;
+    public void delete(String name) throws LispException {
+        if (!objects.containsKey(name)) throw LispException.unknownVariable(name, null);
+        objects.remove(name);
+    }
+
+    //    public boolean hasParent() {
+//        return parent != null;
+//    }
+//
+//    public LispContext getParent() {
+//        return parent;
+//    }
+    public Optional<LispContext> getParent() {
+        return Optional.ofNullable(parent);
+    }
+
+    public boolean has(String name) {
+        return objects.containsKey(name);
     }
 
     public LispContext push() {
@@ -35,13 +60,9 @@ public class LispContext {
         return ctx;
     }
 
-    public Map<String, LispVariableReference> getObjects() {
-        return objects;
-    }
-
-    public LispObject get(String name) {
+    public LispVariableReference get(String name) {
         if (!objects.containsKey(name)) {
-            objects.put(name, new LispVariableReference(name, LispNullObject.INSTANCE));
+            objects.put(name, new LispVariableReference(name, false, LispNullObject.INSTANCE));
         }
         return objects.get(name);
     }

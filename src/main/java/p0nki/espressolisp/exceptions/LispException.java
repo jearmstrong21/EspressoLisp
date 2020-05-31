@@ -12,7 +12,11 @@ public class LispException extends Exception {
         this.token = token;
     }
 
-    public static LispException unexpectedNull(LispToken token){
+    public static LispException unableToAssignToConstant(String name, LispToken token) {
+        return new LispException("Unable to assign to constant " + name, token);
+    }
+
+    public static LispException unexpectedNull(LispToken token) {
         return new LispException("Unexpected null", token);
     }
 

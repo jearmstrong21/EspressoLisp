@@ -11,13 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// TODO add a <T> expectToken(List<Token>, TokenType) which casts tokens.remove(0) as T and throws "expected" if type doesn't match
+
 public class LispASTCreator {
 
     private LispASTCreator() {
 
     }
 
-    //NOTE - only consumes tokens until it parses something. Tokens almost ALWAYS will have more.
+    private static <T extends LispToken> T expect(List<LispToken> tokens, LispTokenType type) throws LispException {
+        LispToken token = tokens.remove(0);
+        if (token.getType() != type) throw LispException.expected(type, token);
+        return (T) token;
+    }
+
     public static LispTreeNode parseUnquotedLiteral(LispUnquotedLiteralToken token) {
         Optional<Double> number = token.getNumber();
         if (number.isPresent()) return new LispLiteralNode(new LispNumberLiteral(number.get()));
@@ -37,9 +44,7 @@ public class LispASTCreator {
                 throw LispException.expected(LispTokenType.UNQUOTED_LITERAL, LispTokenType.LEFT_PAREN, second);
             LispUnquotedLiteralToken op = (LispUnquotedLiteralToken) second;
             if (op.getValue().equals("func")) { // FUNCTION DECLARATION
-                LispToken leftBracket = tokens.remove(0);
-                if (leftBracket.getType() != LispTokenType.LEFT_BRACKET)
-                    throw LispException.expected(LispTokenType.LEFT_BRACKET, LispTokenType.UNQUOTED_LITERAL, leftBracket);
+                LispToken leftBracket = expect(tokens, LispTokenType.LEFT_BRACKET);
                 List<String> argNames = new ArrayList<>();
                 boolean lookingForComma = false;
                 LispToken prevToken = leftBracket;
@@ -68,20 +73,14 @@ public class LispASTCreator {
                     throw LispException.tooManyArguments(prevToken);
                 }
                 LispTreeNode treeNode = parse(tokens);
-                LispToken lastToken = tokens.remove(0);
-                if (lastToken.getType() != LispTokenType.RIGHT_PAREN) {
-                    throw LispException.expected(LispTokenType.RIGHT_PAREN, lastToken);
-                }
+                expect(tokens, LispTokenType.RIGHT_PAREN);
                 return new LispLiteralNode(new LispFunction(argNames, treeNode));
             } else if (op.getValue().equals("for")) {
                 LispTreeNode initialize = parse(tokens);
                 LispTreeNode condition = parse(tokens);
                 LispTreeNode increment = parse(tokens);
                 LispTreeNode body = parse(tokens);
-                LispToken lastToken = tokens.remove(0);
-                if (lastToken.getType() != LispTokenType.RIGHT_PAREN) {
-                    throw LispException.expected(LispTokenType.RIGHT_PAREN, lastToken);
-                }
+                expect(tokens, LispTokenType.RIGHT_PAREN);
                 return new LispTreeNode() {
                     @Override
                     public LispObject evaluate(LispContext context) throws LispException {
@@ -95,14 +94,62 @@ public class LispASTCreator {
 
                     @Override
                     public String debugStringify(String indent) {
-                        return null;
+                        return "for";
+                    }
+                };
+            } else if (op.getValue().equals("while")) {
+                LispTreeNode condition = parse(tokens);
+                LispTreeNode body = parse(tokens);
+                expect(tokens, LispTokenType.RIGHT_PAREN);
+                return new LispTreeNode() {
+                    @Override
+                    public LispObject evaluate(LispContext context) throws LispException {
+                        while (condition.evaluate(context).asBoolean().getValue()) {
+                            body.evaluate(context.push());
+                        }
+                        return LispNullObject.INSTANCE;
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "while";
+                    }
+                };
+            } else if (op.getValue().equals("del")) {
+                LispUnquotedLiteralToken literal = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
+                expect(tokens, LispTokenType.RIGHT_PAREN);
+                return new LispTreeNode() {
+                    @Override
+                    public LispObject evaluate(LispContext context) throws LispException {
+                        context.delete(literal.getValue());
+                        return LispNullObject.INSTANCE;
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "del[" + literal.getValue() + "]";
+                    }
+                };
+            } else if (op.getValue().equals("const")) {
+                LispUnquotedLiteralToken literal = expect(tokens, LispTokenType.UNQUOTED_LITERAL);
+                expect(tokens, LispTokenType.RIGHT_PAREN);
+                return new LispTreeNode() {
+                    @Override
+                    public LispObject evaluate(LispContext context) throws LispException {
+                        LispVariableReference ref = context.get(literal.getValue());
+                        ref.makeConstant();
+                        return LispNullObject.INSTANCE;
+                    }
+
+                    @Override
+                    public String debugStringify(String indent) {
+                        return "const[" + literal.getValue() + "]";
                     }
                 };
             }
             List<LispTreeNode> children = new ArrayList<>();
             boolean ended = false;
             for (int i = 0; i < 1000; i++) {
-                //TODO: add support for raw objects, i.e. just parse `null`
                 if (tokens.size() == 0) throw LispException.prematureEnd(second);
                 if (tokens.get(0).getType() == LispTokenType.RIGHT_PAREN) {
                     ended = true;
@@ -117,9 +164,7 @@ public class LispASTCreator {
                 }
             }
             if (!ended) throw LispException.tooManyArguments(op);
-            LispToken rightParen = tokens.remove(0);
-            if (rightParen.getType() != LispTokenType.RIGHT_PAREN)
-                throw LispException.expected(LispTokenType.RIGHT_PAREN, rightParen);
+            expect(tokens, LispTokenType.RIGHT_PAREN);
             return new ListFunctionInvokeNode(op.getValue(), children);
         } else if (first.getType() == LispTokenType.UNQUOTED_LITERAL) {
             return parseUnquotedLiteral((LispUnquotedLiteralToken) tokens.remove(0));

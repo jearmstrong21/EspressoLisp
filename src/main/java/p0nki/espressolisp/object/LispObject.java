@@ -10,8 +10,6 @@ public abstract class LispObject implements LispRValue {
 
     public abstract boolean isLValue();
 
-    public abstract boolean isRValue();
-
     public final LispObject fullyDereference() {
         LispObject obj = this;
         while (obj.isLValue()) obj = obj.get();
@@ -26,6 +24,11 @@ public abstract class LispObject implements LispRValue {
     public final LispBooleanLiteral asBoolean() throws LispException {
         if (this instanceof LispBooleanLiteral) return (LispBooleanLiteral) this;
         throw LispException.invalidType("boolean", getType(), null);
+    }
+
+    public final LispFunction asFunction() throws LispException {
+        if (this instanceof LispFunction) return (LispFunction) this;
+        throw LispException.invalidType("function", getType(), null);
     }
 
 }

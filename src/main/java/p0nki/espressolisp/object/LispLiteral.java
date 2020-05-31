@@ -12,8 +12,4 @@ public abstract class LispLiteral extends LispObject implements LispRValue {
         return false;
     }
 
-    @Override
-    public boolean isRValue() {
-        return true;
-    }
 }
