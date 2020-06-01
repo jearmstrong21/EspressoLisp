@@ -1,4 +1,6 @@
-package p0nki.espressolisp.object;
+package p0nki.espressolisp.object.literal;
+
+import p0nki.espressolisp.object.LispObject;
 
 public abstract class LispLiteral extends LispObject {
 

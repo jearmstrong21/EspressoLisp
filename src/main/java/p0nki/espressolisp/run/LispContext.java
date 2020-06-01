@@ -3,7 +3,7 @@ package p0nki.espressolisp.run;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.library.LispBuiltinLibrary;
 import p0nki.espressolisp.library.LispLibrary;
-import p0nki.espressolisp.object.LispNullLiteral;
+import p0nki.espressolisp.object.literal.LispNullLiteral;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.token.LispTokenizer;

@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.LispNullLiteral;
+import p0nki.espressolisp.object.literal.LispNullLiteral;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;

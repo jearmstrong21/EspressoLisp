@@ -1,6 +1,10 @@
 package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
+import p0nki.espressolisp.object.literal.LispBooleanLiteral;
+import p0nki.espressolisp.object.literal.LispFunctionLiteral;
+import p0nki.espressolisp.object.literal.LispNumberLiteral;
+import p0nki.espressolisp.object.literal.LispStringLiteral;
 
 public abstract class LispObject {
 

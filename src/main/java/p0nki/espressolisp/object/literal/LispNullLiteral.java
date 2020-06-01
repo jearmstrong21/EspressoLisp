@@ -1,4 +1,4 @@
-package p0nki.espressolisp.object;
+package p0nki.espressolisp.object.literal;
 
 public final class LispNullLiteral extends LispLiteral {
 

@@ -1,7 +1,7 @@
 package p0nki.espressolisp.tree;
 
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.*;
+import p0nki.espressolisp.object.literal.*;
 import p0nki.espressolisp.token.LispLiteralToken;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;

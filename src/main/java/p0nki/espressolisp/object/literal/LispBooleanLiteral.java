@@ -1,4 +1,4 @@
-package p0nki.espressolisp.object;
+package p0nki.espressolisp.object.literal;
 
 public class LispBooleanLiteral extends LispLiteral {
 
