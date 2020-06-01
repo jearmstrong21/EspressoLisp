@@ -142,6 +142,8 @@ public enum LispBuiltinLibrary implements LispLibrary {
             return new LispListLiteral(values);
         })).makeConstant();
         // TODO insert and remove for lists
+        // TODO for `nth` support negatives
+        // TODO sublist
 
         context.set("copy", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> arg1.fullyDereference().deepCopy())).makeConstant();
     }
