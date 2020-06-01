@@ -3,9 +3,11 @@ package p0nki.espressolisp.object.literal;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.ToDebugJSON;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LispFunctionLiteral extends LispLiteral implements ToDebugJSON {
@@ -24,6 +26,11 @@ public class LispFunctionLiteral extends LispLiteral implements ToDebugJSON {
 
     public LispTreeNode getTreeRoot() {
         return treeRoot;
+    }
+
+    @Override
+    public LispObject deepCopy() {
+        return new LispFunctionLiteral(new ArrayList<>(argNames), treeRoot);
     }
 
     @Override

@@ -27,6 +27,11 @@ public class LispReference extends LispObject {
     }
 
     @Override
+    public LispObject deepCopy() {
+        return fullyDereference().deepCopy();
+    }
+
+    @Override
     public String lispStr() {
         return fullyDereference().lispStr();
     }

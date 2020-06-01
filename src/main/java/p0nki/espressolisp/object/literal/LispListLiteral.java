@@ -14,6 +14,11 @@ public class LispListLiteral extends LispLiteral {
     }
 
     @Override
+    public LispObject deepCopy() {
+        return new LispListLiteral(objects.stream().map(LispObject::deepCopy).collect(Collectors.toList()));
+    }
+
+    @Override
     public String lispStr() {
         return "[" + objects.stream().map(LispObject::lispStr).collect(Collectors.joining(", ")) + "]";
     }

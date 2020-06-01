@@ -1,6 +1,7 @@
 package p0nki.espressolisp.object.literal;
 
 import p0nki.espressolisp.exceptions.LispException;
+import p0nki.espressolisp.object.LispObject;
 
 public class LispNumberLiteral extends LispLiteral {
 
@@ -12,6 +13,11 @@ public class LispNumberLiteral extends LispLiteral {
 
     public double getValue() {
         return value;
+    }
+
+    @Override
+    public LispObject deepCopy() {
+        return new LispNumberLiteral(value);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package p0nki.espressolisp.object.literal;
 
-import p0nki.espressolisp.object.literal.LispLiteral;
+import p0nki.espressolisp.object.LispObject;
 
 public class LispStringLiteral extends LispLiteral {
 
@@ -8,6 +8,11 @@ public class LispStringLiteral extends LispLiteral {
 
     public LispStringLiteral(String value) {
         this.value = value;
+    }
+
+    @Override
+    public LispObject deepCopy() {
+        return new LispStringLiteral(value);
     }
 
     @Override

@@ -5,6 +5,8 @@ import p0nki.espressolisp.object.literal.*;
 
 public abstract class LispObject {
 
+    public abstract LispObject deepCopy();
+
     public abstract String lispStr();
 
     public abstract String toString();
@@ -16,7 +18,7 @@ public abstract class LispObject {
     public final LispObject fullyDereference() {
         LispObject obj = this;
         while (obj.isLValue()) obj = obj.get();
-        return obj;
+        return obj.deepCopy();
     }
 
     public abstract LispObject get();
