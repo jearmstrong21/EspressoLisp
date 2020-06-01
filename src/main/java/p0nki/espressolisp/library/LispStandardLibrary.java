@@ -1,7 +1,7 @@
 package p0nki.espressolisp.library;
 
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.function.LispMonadAdapter;
+import p0nki.espressolisp.adapter.LispMonadAdapter;
 import p0nki.espressolisp.object.*;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.utils.Utils;

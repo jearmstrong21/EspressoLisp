@@ -13,6 +13,14 @@ public class LispException extends Exception {
 //        if (token == null) System.out.println("NULL TOKEN " + message);
     }
 
+    public static LispException noParentContext(LispToken token) {
+        return new LispException("No parent context", token);
+    }
+
+    public static LispException notInteger(double value, LispToken token) {
+        return new LispException("Expected integer, got " + value, token);
+    }
+
     public static LispException unableToAssignToConstant(String name, LispToken token) {
         return new LispException("Unable to assign to constant " + name, token);
     }

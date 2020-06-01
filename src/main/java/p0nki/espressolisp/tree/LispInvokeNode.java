@@ -46,10 +46,11 @@ public class LispInvokeNode extends LispTreeNode {
         while (object.isLValue()) object = object.get();
         if (!(object instanceof LispFunctionLiteral)) throw LispException.uncallableVariable(name, null);
         LispFunctionLiteral function = (LispFunctionLiteral) object;
-        if (function.getArgNames().size() != args.size())
+//        if(function)
+        if (function.getArgNames().size() < args.size())
             throw LispException.invalidArgList(function.getArgNames().size(), args.size(), null);
         LispContext pushed = context.push();
-        for (int i = 0; i < function.getArgNames().size(); i++) {
+        for (int i = 0; i < args.size(); i++) {
             LispObject obj = args.get(i).evaluate(context);
 //            System.out.println("ARG " + i + ": " + obj);
             pushed.overwrite(function.getArgNames().get(i), new LispReference(function.getArgNames().get(i), false, obj));

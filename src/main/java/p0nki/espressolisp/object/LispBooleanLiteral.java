@@ -13,6 +13,11 @@ public class LispBooleanLiteral extends LispLiteral {
     }
 
     @Override
+    public String lispStr() {
+        return value + "";
+    }
+
+    @Override
     public String toString() {
         return "boolean[" + value + "]";
     }

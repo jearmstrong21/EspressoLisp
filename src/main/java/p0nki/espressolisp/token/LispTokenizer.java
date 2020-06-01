@@ -20,7 +20,7 @@ public class LispTokenizer {
     private StringBuffer buffer = new StringBuffer();
 
     private void flushBuffer() {
-        buffer = new StringBuffer(buffer.toString().trim());
+//        buffer = new StringBuffer(buffer.toString().trim());
         if (buffer.length() == 0) return;
         tokens.add(new LispLiteralToken(buffer.toString(), reader.getIndex() - buffer.length() - 1, reader.getIndex() - 1));
         buffer = new StringBuffer();

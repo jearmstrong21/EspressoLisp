@@ -11,6 +11,7 @@ import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.LispStandardLogger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ public class LispContextTest {
 
     private void run(LispContext context, String code) {
         List<LispToken> tokens = LispTokenizer.tokenize(code);
+        List<LispToken> originalTokens = new ArrayList<>(tokens);
         System.out.println(code);
         while (tokens.size() > 0) {
             try {
@@ -46,7 +48,7 @@ public class LispContextTest {
 
                     System.out.println();
                     System.out.println("TOKENS:");
-                    System.out.println(tokens.stream().map(LispToken::toString).collect(Collectors.joining("\n")));
+                    System.out.println(originalTokens.stream().map(LispToken::toString).collect(Collectors.joining("\n")));
                 }
                 exc.printStackTrace();
                 System.exit(1);
@@ -55,7 +57,7 @@ public class LispContextTest {
         System.out.println();
     }
 
-    @Test
+    @Test(timeout = 100)
     public void test() throws LispException {
         LispContext context = new LispContext(new LispStandardLogger(), null);
         context.potentialLibrary(LispStandardLibrary.INSTANCE);
@@ -115,15 +117,19 @@ public class LispContextTest {
 //        run(context, "(import std)");
 //        run(context, "std.println");
 //
-        run(context, "(import std)");
-        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
-        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
-        run(context, "(= fib (func [n] (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
-        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (fib i)))");
+//        run(context, "(import std)");
+//        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
+//        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
+//        run(context, "(= fib (func [n] (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
+//        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (fib i)))");
 
-//        run(context, "arg1");
-//        run(context, "(= arg1 5)");
-//        run(context, "arg1");
+//        run(context, "(concat 'hi' (concat ' ' 'world'))");
+//        run(context, "(concat 'hi' 'world')");
+//        run(context, "(concat 'hi' (str 5))");
+//        run(context, "(substr 'hello world' 6)");
+//        run(context, "(substr 'hello world' 4 (+ 2 5))");
+//        run(context, "(do (for (do (= i 1) (= j 0)) (< i 21) (= i (inc i)) (= j (+ j (* i i)))) j)");
+        run(context, "((func [x] (+ 2 x)) 4)");
 
         // TODO test `while` and `for` again, they have been rewritten
 

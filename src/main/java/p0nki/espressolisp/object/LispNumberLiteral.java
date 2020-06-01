@@ -1,5 +1,7 @@
 package p0nki.espressolisp.object;
 
+import p0nki.espressolisp.exceptions.LispException;
+
 public class LispNumberLiteral extends LispLiteral {
 
     private final double value;
@@ -10,6 +12,16 @@ public class LispNumberLiteral extends LispLiteral {
 
     public double getValue() {
         return value;
+    }
+
+    @Override
+    public String lispStr() {
+        return value + "";
+    }
+
+    public LispNumberLiteral assertInteger () throws LispException {
+        if((int)value != value) throw LispException.notInteger(value, null);
+        return this;
     }
 
     @Override

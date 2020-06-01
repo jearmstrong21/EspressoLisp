@@ -1,4 +1,4 @@
-package p0nki.espressolisp.function;
+package p0nki.espressolisp.adapter;
 
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
@@ -12,6 +12,7 @@ public interface LispMonadAdapter extends LispFunctionalInterface {
 
     @Override
     default LispObject evaluate(LispContext parentContext, List<LispObject> args) throws LispException {
+        if(args.size() != 1) throw LispException.invalidArgList(1, args.size(), null);
         return evaluate(parentContext, args.get(0));
     }
 

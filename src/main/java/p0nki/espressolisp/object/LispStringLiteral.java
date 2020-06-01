@@ -9,6 +9,15 @@ public class LispStringLiteral extends LispLiteral {
     }
 
     @Override
+    public String lispStr() {
+        return value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override
     public String toString() {
         return "string[" + value + "]";
     }

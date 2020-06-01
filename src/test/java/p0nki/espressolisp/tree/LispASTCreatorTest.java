@@ -15,11 +15,8 @@ public class LispASTCreatorTest {
     }
 
     @Test
-    public void test() throws LispException, JSONException {
-//        run("(applylib std)");
-//        run("(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
-//        run("(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
-//        run("'hi'");
+    public void test() {
+//        run("(concat 'hi' (concat ' ' 'world'))");
     }
 
 }

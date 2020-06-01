@@ -4,6 +4,8 @@ import p0nki.espressolisp.exceptions.LispException;
 
 public abstract class LispObject {
 
+    public abstract String lispStr();
+
     public abstract String toString();
 
     public abstract String getType();
@@ -31,6 +33,11 @@ public abstract class LispObject {
     public final LispFunctionLiteral asFunction() throws LispException {
         if (this instanceof LispFunctionLiteral) return (LispFunctionLiteral) this;
         throw LispException.invalidType("function", getType(), null);
+    }
+
+    public final LispStringLiteral asString() throws LispException {
+        if (this instanceof LispStringLiteral) return (LispStringLiteral) this;
+        throw LispException.invalidType("string", getType(), null);
     }
 
     public final LispReference asReference() throws LispException {

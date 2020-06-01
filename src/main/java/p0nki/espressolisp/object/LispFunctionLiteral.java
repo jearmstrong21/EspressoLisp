@@ -27,6 +27,11 @@ public class LispFunctionLiteral extends LispLiteral implements ToDebugJSON {
     }
 
     @Override
+    public String lispStr() {
+        return "function[" + argNames.size() + "]";
+    }
+
+    @Override
     public String toString() {
         return "function[" + String.join(",", argNames) + "]";
     }

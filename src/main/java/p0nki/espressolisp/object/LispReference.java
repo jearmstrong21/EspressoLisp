@@ -27,6 +27,11 @@ public class LispReference extends LispObject {
     }
 
     @Override
+    public String lispStr() {
+        return fullyDereference().lispStr();
+    }
+
+    @Override
     public String toString() {
         return (constant ? "const" : "") + "ref[" + name + "]";
     }
