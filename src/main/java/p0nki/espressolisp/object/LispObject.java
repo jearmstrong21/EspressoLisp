@@ -1,10 +1,7 @@
 package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.literal.LispBooleanLiteral;
-import p0nki.espressolisp.object.literal.LispFunctionLiteral;
-import p0nki.espressolisp.object.literal.LispNumberLiteral;
-import p0nki.espressolisp.object.literal.LispStringLiteral;
+import p0nki.espressolisp.object.literal.*;
 
 public abstract class LispObject {
 
@@ -23,6 +20,11 @@ public abstract class LispObject {
     }
 
     public abstract LispObject get();
+
+    public final LispListLiteral asList() throws LispException {
+        if (this instanceof LispListLiteral) return (LispListLiteral) this;
+        throw LispException.invalidType("list", getType(), null);
+    }
 
     public final LispNumberLiteral asNumber() throws LispException {
         if (this instanceof LispNumberLiteral) return (LispNumberLiteral) this;

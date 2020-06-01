@@ -124,8 +124,21 @@ public class LispContextTest {
 //        run(context, "(= fib (func [n] (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
 //        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (fib i)))");
 
-        run(context, "(= sum (func [x y] (if (< x 2) 1 (if (< y 2) 1 (+ x (+ y (+ (sum (dec x) y) (sum x (dec y)))))))))");
-        run(context, "(sum 50 50)");
+//        run(context, "(= sum (func [x y] (if (< x 2) 1 (if (< y 2) 1 (+ x (+ y (+ (sum (dec x) y) (sum x (dec y)))))))))");
+//        run(context, "(sum 5 5)");
+
+//        run(context, "(= test (list 5 4 3 2 1))");
+//        run(context, "test");
+//        run(context, "(typeof test)");
+//        run(context, "(nth test 3)");
+//        run(context, "(= i 2)");
+//        run(context, "(nth test i)");
+//        run(context, "(nth (list 0 1 2 3) (+ 1 2))");
+        run(context, "(= a (list 1 (list 2 3)))");
+        run(context, "a");
+        run(context, "(= b (push a (list 4 5)))");
+        run(context, "a");
+        run(context, "b");
 
 //        run(context, "(concat 'hi' (concat ' ' 'world'))");
 //        run(context, "(concat 'hi' 'world')");

@@ -1,7 +1,12 @@
 package p0nki.espressolisp.tree;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
+import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.literal.*;
+import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispLiteralToken;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
@@ -23,6 +28,16 @@ public class LispASTCreator {
         LispToken token = tokens.remove(0);
         if (token.getType() != type) throw LispException.expected(type, token);
         return (T) token;
+    }
+
+    private static List<LispTreeNode> readNodeList(List<LispToken> tokens, LispToken token) throws LispException {
+        List<LispTreeNode> nodes = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {//TODO make this an actual parameter or class constant or configuration
+            if (tokens.size() == 0) throw LispException.prematureEnd(token);
+            if (tokens.get(0).getType() == LispTokenType.RIGHT_PAREN) break;
+            nodes.add(parse(tokens));
+        }
+        return nodes;
     }
 
     // TODO make new nodes instead of instantiating classes inline
@@ -88,18 +103,36 @@ public class LispASTCreator {
                         return new LispIfNode(condition, then, new LispLiteralNode(LispNullLiteral.INSTANCE, op), op);
                     }
                 }
-            }
-            List<LispTreeNode> children = new ArrayList<>();
-            boolean ended = false;
-            for (int i = 0; i < 1000; i++) {
-                if (tokens.size() == 0) throw LispException.prematureEnd(second);
-                if (tokens.get(0).getType() == LispTokenType.RIGHT_PAREN) {
-                    ended = true;
-                    break;
+                case "list": {
+                    List<LispTreeNode> nodes = readNodeList(tokens, op);
+                    expect(tokens, LispTokenType.RIGHT_PAREN);
+                    return new LispTreeNode(op) {
+                        @Override
+                        public LispObject evaluate(LispContext context) throws LispException {
+                            List<LispObject> objects = new ArrayList<>();
+                            for (LispTreeNode node : nodes) objects.add(node.evaluate(context));
+                            return new LispListLiteral(objects);
+                        }
+
+                        @Override
+                        public JSONObject toDebugJSON() throws JSONException {
+                            JSONArray arr = new JSONArray();
+                            nodes.forEach(node -> {
+                                try {
+                                    arr.put(node.toDebugJSON());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    System.exit(1);
+                                }
+                            });
+                            return new JSONObject()
+                                    .put("type", "uninvoked_list")
+                                    .put("elements", "");
+                        }
+                    };
                 }
-                children.add(parse(tokens));
             }
-            if (!ended) throw LispException.tooManyArguments(op);
+            List<LispTreeNode> children = readNodeList(tokens, op);
             expect(tokens, LispTokenType.RIGHT_PAREN);
             if (op.getValue().equals("do")) {
                 return new LispDoNode(children, op);

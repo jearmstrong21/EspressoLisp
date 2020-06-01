@@ -3,10 +3,13 @@ package p0nki.espressolisp.library;
 import p0nki.espressolisp.adapter.LispDyadAdapter;
 import p0nki.espressolisp.adapter.LispMonadAdapter;
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.*;
+import p0nki.espressolisp.object.LispObject;
+import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.object.literal.*;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.utils.Utils;
+
+import java.util.List;
 
 public enum LispBuiltinLibrary implements LispLibrary {
 
@@ -109,18 +112,11 @@ public enum LispBuiltinLibrary implements LispLibrary {
             return new LispStringLiteral(arg1.asString().getValue() + arg2.asString().getValue());
         })).makeConstant();
         context.set("substr", new LispCompleteFunctionLiteral(Utils.of("string", "start", "end"), (parentContext, args) -> {
-            if (args.size() == 0) throw LispException.invalidArgList(2, 0, null);
-            if (args.size() == 1) throw LispException.invalidArgList(2, 1, null);
-            LispStringLiteral str = args.get(0).fullyDereference().asString();
-            LispNumberLiteral start = args.get(1).fullyDereference().asNumber().assertInteger();
-            if (args.size() == 2) {
-                return new LispStringLiteral(str.getValue().substring((int) start.getValue()));
-            }
-            LispObject arg3 = args.get(2).fullyDereference();
-            if (arg3 == LispNullLiteral.INSTANCE)
-                return new LispStringLiteral(str.getValue().substring((int) start.getValue()));
-            LispNumberLiteral end = args.get(2).fullyDereference().asNumber().assertInteger();
-            return new LispStringLiteral(str.getValue().substring((int) start.getValue(), (int) end.getValue()));
+            if (args.size() != 3) throw LispException.invalidArgList(3, args.size(), null);
+            return new LispStringLiteral(
+                    args.get(0).fullyDereference().asString().getValue().substring(
+                            (int) args.get(1).fullyDereference().asNumber().assertInteger().getValue(),
+                            (int) args.get(2).fullyDereference().asNumber().assertInteger().getValue()));
         })).makeConstant();
         context.set("len", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> new LispNumberLiteral(arg1.asString().getValue().length()))).makeConstant();
         context.set("typeof", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> new LispStringLiteral(arg1.fullyDereference().getType()))).makeConstant();
@@ -130,6 +126,14 @@ public enum LispBuiltinLibrary implements LispLibrary {
             if (!parentContext.getParent().isPresent()) throw LispException.noParentContext(null);
             parentContext.getParent().get().delete(arg1.asReference().getName());
             return LispNullLiteral.INSTANCE;
+        })).makeConstant();
+        context.set("nth", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (parentContext, arg1, arg2) -> arg1.fullyDereference().asList().getObjects().get((int) arg2.fullyDereference().asNumber().assertInteger().getValue()))).makeConstant();
+        context.set("push", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (parentContext, arg1, arg2) -> {
+            LispListLiteral list = arg1.fullyDereference().asList();
+            LispObject toPush = arg2.fullyDereference();
+            List<LispObject> values = list.getObjects();
+            values.add(toPush);
+            return new LispListLiteral(values);
         })).makeConstant();
     }
 
