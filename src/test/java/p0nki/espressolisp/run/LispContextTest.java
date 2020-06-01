@@ -1,5 +1,6 @@
 package p0nki.espressolisp.run;
 
+import org.json.JSONException;
 import org.junit.Test;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.library.LispMathLibrary;
@@ -18,14 +19,14 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class LispContextTest {
 
-    private void run(LispContext context, String code) {
+    private void run(LispContext context, String code) throws JSONException {
         List<LispToken> tokens = LispTokenizer.tokenize(code);
         List<LispToken> originalTokens = new ArrayList<>(tokens);
         System.out.println(code);
         while (tokens.size() > 0) {
             try {
                 LispTreeNode tree = LispASTCreator.parse(tokens);
-//                System.out.println(tree.debugStringify(""));
+                System.out.println(tree.toDebugJSON().toString(5));
                 LispObject res = tree.evaluate(context);
                 System.out.print("=> " + res);
                 while (res.isLValue()) {
@@ -58,7 +59,7 @@ public class LispContextTest {
     }
 
     @Test(timeout = 100)
-    public void test() throws LispException {
+    public void test() throws LispException, JSONException {
         LispContext context = new LispContext(new LispStandardLogger(), null);
         context.potentialLibrary(LispStandardLibrary.INSTANCE);
         context.potentialLibrary(LispMathLibrary.INSTANCE);
@@ -138,15 +139,16 @@ public class LispContextTest {
 //        run(context, "(= i 2)");
 //        run(context, "(nth test i)");
 //        run(context, "(nth (list 0 1 2 3) (+ 1 2))");
-        run(context, "(= a (list 1 (list 2 3)))");
-        run(context, "a");
-        run(context, "(= b (push a (list 4 5)))");
-        run(context, "a");
-        run(context, "b");
-        run(context, "(pop a)");
-        run(context, "a");
-        run(context, "(= a (pop a))");
-        run(context, "a");
+
+//        run(context, "(= a (list 1 (list 2 3)))");
+//        run(context, "a");
+//        run(context, "(= b (push a (list 4 5)))");
+//        run(context, "a");
+//        run(context, "b");
+//        run(context, "(pop a)");
+//        run(context, "a");
+//        run(context, "(= a (pop a))");
+//        run(context, "a");
 
 //        run(context, "(concat 'hi' (concat ' ' 'world'))");
 //        run(context, "(concat 'hi' 'world')");
@@ -155,7 +157,13 @@ public class LispContextTest {
 //        run(context, "(substr 'hello world' 4 (+ 2 5))");
 //        run(context, "(do (for (do (= i 1) (= j 0)) (< i 21) (= i (inc i)) (= j (+ j (* i i)))) j)");
 
-//        run(context, "((func [x] (+ 2 x)) 4)");
+        run(context, "((func [x] (+ 2 x)) 5)");
+        run(context, "(= f (func [x] (+ 2 x)))");
+        run(context, "(= x (f 5))");
+        run(context, "x");
+//        run(context, "3");
+//        run(context, "true");
+//        run(context, "null");
 
         // TODO test `while` and `for` again, they have been rewritten
 

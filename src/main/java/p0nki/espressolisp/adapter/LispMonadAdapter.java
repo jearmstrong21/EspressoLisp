@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface LispMonadAdapter extends LispFunctionalInterface {
 
-    LispObject evaluate(LispContext parentContext, LispObject arg1) throws LispException;
+    LispObject evaluate(LispContext ctx, LispObject arg1) throws LispException;
 
     @Override
-    default LispObject evaluate(LispContext parentContext, List<LispObject> args) throws LispException {
+    default LispObject evaluate(LispContext ctx, List<LispObject> args) throws LispException {
         if(args.size() != 1) throw LispException.invalidArgList(1, args.size(), null);
-        return evaluate(parentContext, args.get(0));
+        return evaluate(ctx, args.get(0));
     }
 
 }
