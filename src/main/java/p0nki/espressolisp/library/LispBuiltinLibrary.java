@@ -123,6 +123,13 @@ public enum LispBuiltinLibrary implements LispLibrary {
         })).makeConstant();
         context.set("len", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> new LispNumberLiteral(arg1.asString().getValue().length()))).makeConstant();
         context.set("typeof", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> new LispStringLiteral(arg1.fullyDereference().getType()))).makeConstant();
+        context.set("del", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
+            arg1 = arg1.get();
+            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
+            if (!parentContext.getParent().isPresent()) throw LispException.noParentContext(null);
+            parentContext.getParent().get().delete(arg1.asReference().getName());
+            return LispNullLiteral.INSTANCE;
+        })).makeConstant();
     }
 
     @Override

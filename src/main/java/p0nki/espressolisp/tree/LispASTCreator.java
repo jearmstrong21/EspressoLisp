@@ -5,6 +5,7 @@ import p0nki.espressolisp.object.*;
 import p0nki.espressolisp.token.LispLiteralToken;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
+import p0nki.espressolisp.tree.controlflow.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,10 +85,6 @@ public class LispASTCreator {
                     expect(tokens, LispTokenType.RIGHT_PAREN);
                     return new LispWhileNode(condition, body, op);
                 }
-                case "del":
-                    LispLiteralToken literal = expect(tokens, LispTokenType.LITERAL);
-                    expect(tokens, LispTokenType.RIGHT_PAREN);
-                    return new LispDelNode(literal.getValue(), op);
                 case "if": {
                     LispTreeNode condition = parse(tokens);
                     LispTreeNode then = parse(tokens);

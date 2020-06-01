@@ -65,12 +65,10 @@ public class LispContextTest {
         System.out.println();
 
         //`del` test
-//        run(context, "(= x 5)");
-//        run(context, "x");
-//        run(context, "(del x)");
-//        run(context, "x");
-//        run(context, "y");
-//        run(context, "(= null x)");
+        run(context, "(= x 5)");
+        run(context, "x");
+        run(context, "(del x)");
+        run(context, "x");
 
 //        run(context, "(= x 5)");
 //        run(context, "x");
@@ -129,7 +127,8 @@ public class LispContextTest {
 //        run(context, "(substr 'hello world' 6)");
 //        run(context, "(substr 'hello world' 4 (+ 2 5))");
 //        run(context, "(do (for (do (= i 1) (= j 0)) (< i 21) (= i (inc i)) (= j (+ j (* i i)))) j)");
-        run(context, "((func [x] (+ 2 x)) 4)");
+
+//        run(context, "((func [x] (+ 2 x)) 4)");
 
         // TODO test `while` and `for` again, they have been rewritten
 
