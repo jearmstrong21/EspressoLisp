@@ -26,7 +26,7 @@ public class LispContextTest {
         while (tokens.size() > 0) {
             try {
                 LispTreeNode tree = LispASTCreator.parse(tokens);
-                System.out.println(tree.toDebugJSON().toString(5));
+//                System.out.println(tree.toDebugJSON().toString(5));
                 LispObject res = tree.evaluate(context);
                 System.out.print("=> " + res);
                 while (res.isLValue()) {
@@ -123,8 +123,9 @@ public class LispContextTest {
 //        run(context, "(import std)");
 //        run(context, "std.println");
 //
-//        run(context, "(import std)");
-//        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
+        run(context, "(import std)");
+        run(context, "(= factorial (func [n] (if (< n 2) 1 (* n (factorial (dec n))))))");
+        run(context, "(factorial (+ 5 3))");
 //        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
 //        run(context, "(= fib (func [n] (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
 //        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (fib i)))");
@@ -157,13 +158,16 @@ public class LispContextTest {
 //        run(context, "(substr 'hello world' 4 (+ 2 5))");
 //        run(context, "(do (for (do (= i 1) (= j 0)) (< i 21) (= i (inc i)) (= j (+ j (* i i)))) j)");
 
-        run(context, "((func [x] (+ 2 x)) 5)");
-        run(context, "(= f (func [x] (+ 2 x)))");
-        run(context, "(= x (f 5))");
-        run(context, "x");
+//        run(context, "((func [x] (+ 3 x)) 5)");
+//        run(context, "(= f (func [x] (+ 2 x)))");
+//        run(context, "(f 5)");
+//        run(context, "x");
 //        run(context, "3");
 //        run(context, "true");
 //        run(context, "null");
+
+//        run(context, "(do (= f (func [x] (+ 2 x))) (f 5))");
+//        run(context, "f");
 
         // TODO test `while` and `for` again, they have been rewritten
 
