@@ -2,18 +2,14 @@ package p0nki.espressolisp.run;
 
 import org.junit.Test;
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.function.LispMonadAdapter;
 import p0nki.espressolisp.library.LispMathLibrary;
 import p0nki.espressolisp.library.LispStandardLibrary;
-import p0nki.espressolisp.object.LispCompleteFunction;
-import p0nki.espressolisp.object.LispNullObject;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.LispStandardLogger;
-import p0nki.espressolisp.utils.Utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -113,7 +109,7 @@ public class LispContextTest {
         //  6) VERY IMPORTANT AUTOMATE FULLIMPORT ON LIBRARY TO """MERGE""" LIBRARY WITH LOCAL CONTEXT. HOW TO DEAL WITH CONFLICTS? REPLACE WITH LIB, REPLACE WITH LOCAL, OR THROW? THROW IS PROBABLY BEST IDEA
         //  7) CHAR AND STRING LITERALS SHOULD NOT BE DISTINCT!
         //  8) ADD QUOTED_LITERAL AS WELL, MODIFY AST PARSER TO BE "PARSELITERAL" INSTEAD OF "PARSEUNQUOTEDLITERAL"
-        //  9) STRING OPERATIONS, REFACTOR AND RENAME EVERY SINGLE FUCKING NAME
+        //  9) STRING OPERATIONS, REFACTOR AND RENAME EVERY SINGLE NAME
 
 //        run(context, "std.println");
 //        run(context, "(import std)");

@@ -8,12 +8,12 @@ import p0nki.espressolisp.utils.ToDebugJSON;
 
 import java.util.List;
 
-public class LispFunction extends LispLiteral implements ToDebugJSON {
+public class LispFunctionLiteral extends LispLiteral implements ToDebugJSON {
 
     private final List<String> argNames;
     private final LispTreeNode treeRoot;
 
-    public LispFunction(List<String> argNames, LispTreeNode treeRoot) {
+    public LispFunctionLiteral(List<String> argNames, LispTreeNode treeRoot) {
         this.argNames = argNames;
         this.treeRoot = treeRoot;
     }

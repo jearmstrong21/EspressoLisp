@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.LispFunction;
+import p0nki.espressolisp.object.LispFunctionLiteral;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.run.LispContext;
@@ -44,8 +44,8 @@ public class LispInvokeNode extends LispTreeNode {
     public LispObject evaluate(LispContext context) throws LispException {
         LispObject object = context.get(name);
         while (object.isLValue()) object = object.get();
-        if (!(object instanceof LispFunction)) throw LispException.uncallableVariable(name, null);
-        LispFunction function = (LispFunction) object;
+        if (!(object instanceof LispFunctionLiteral)) throw LispException.uncallableVariable(name, null);
+        LispFunctionLiteral function = (LispFunctionLiteral) object;
         if (function.getArgNames().size() != args.size())
             throw LispException.invalidArgList(function.getArgNames().size(), args.size(), null);
         LispContext pushed = context.push();

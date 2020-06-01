@@ -3,7 +3,7 @@ package p0nki.espressolisp.tree;
 import org.json.JSONException;
 import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.LispNullObject;
+import p0nki.espressolisp.object.LispNullLiteral;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
@@ -24,7 +24,7 @@ public class LispWhileNode extends LispTreeNode {
         while (condition.evaluate(context).asBoolean().getValue()) {
             body.evaluate(context.push());
         }
-        return LispNullObject.INSTANCE;
+        return LispNullLiteral.INSTANCE;
     }
 
     @Override

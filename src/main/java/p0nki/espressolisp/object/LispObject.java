@@ -2,7 +2,7 @@ package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
 
-public abstract class LispObject implements LispRValue {
+public abstract class LispObject {
 
     public abstract String toString();
 
@@ -16,6 +16,8 @@ public abstract class LispObject implements LispRValue {
         return obj;
     }
 
+    public abstract LispObject get();
+
     public final LispNumberLiteral asNumber() throws LispException {
         if (this instanceof LispNumberLiteral) return (LispNumberLiteral) this;
         throw LispException.invalidType("number", getType(), null);
@@ -26,8 +28,8 @@ public abstract class LispObject implements LispRValue {
         throw LispException.invalidType("boolean", getType(), null);
     }
 
-    public final LispFunction asFunction() throws LispException {
-        if (this instanceof LispFunction) return (LispFunction) this;
+    public final LispFunctionLiteral asFunction() throws LispException {
+        if (this instanceof LispFunctionLiteral) return (LispFunctionLiteral) this;
         throw LispException.invalidType("function", getType(), null);
     }
 

@@ -32,7 +32,7 @@ public class LispASTCreator {
             tokens.remove(0);
             LispToken second = tokens.remove(0);
             if (second.getType() == LispTokenType.RIGHT_PAREN)
-                return new LispLiteralNode(LispNullObject.INSTANCE, second);
+                return new LispLiteralNode(LispNullLiteral.INSTANCE, second);
             if (second.getType() != LispTokenType.LITERAL)
                 throw LispException.expected(LispTokenType.LITERAL, LispTokenType.LEFT_PAREN, second);
             LispLiteralToken op = (LispLiteralToken) second;
@@ -67,7 +67,7 @@ public class LispASTCreator {
                 }
                 LispTreeNode treeNode = parse(tokens);
                 expect(tokens, LispTokenType.RIGHT_PAREN);
-                return new LispLiteralNode(new LispFunction(argNames, treeNode), op);
+                return new LispLiteralNode(new LispFunctionLiteral(argNames, treeNode), op);
             } else if (op.getValue().equals("for")) {
                 LispTreeNode initialize = parse(tokens);
                 LispTreeNode condition = parse(tokens);
@@ -94,7 +94,7 @@ public class LispASTCreator {
                     return new LispIfNode(condition, then, otherwise, op);
                 } else {
                     expect(tokens, LispTokenType.RIGHT_PAREN);
-                    return new LispIfNode(condition, then, new LispLiteralNode(LispNullObject.INSTANCE, op), op);
+                    return new LispIfNode(condition, then, new LispLiteralNode(LispNullLiteral.INSTANCE, op), op);
                 }
             }
 //            else if (op.getValue().equals("const")) {
@@ -189,7 +189,7 @@ public class LispASTCreator {
                 return new LispLiteralNode(new LispNumberLiteral(literal.getNumber().get()), literal);
             if (literal.getBoolean().isPresent())
                 return new LispLiteralNode(new LispBooleanLiteral(literal.getBoolean().get()), literal);
-            if (literal.getNull()) return new LispLiteralNode(LispNullObject.INSTANCE, literal);
+            if (literal.getNull()) return new LispLiteralNode(LispNullLiteral.INSTANCE, literal);
             return new LispReferenceNode(literal.getValue(), literal);
         } else if (first.getType() == LispTokenType.QUOTE) {
             expect(tokens, LispTokenType.QUOTE);

@@ -3,7 +3,7 @@ package p0nki.espressolisp.run;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.library.LispBuiltinLibrary;
 import p0nki.espressolisp.library.LispLibrary;
-import p0nki.espressolisp.object.LispNullObject;
+import p0nki.espressolisp.object.LispNullLiteral;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.token.LispTokenizer;
@@ -86,7 +86,7 @@ public class LispContext {
 
     public LispReference get(String name) {
         if (!objects.containsKey(name)) {
-            objects.put(name, new LispReference(name, false, LispNullObject.INSTANCE));
+            objects.put(name, new LispReference(name, false, LispNullLiteral.INSTANCE));
         }
         return objects.get(name);
     }

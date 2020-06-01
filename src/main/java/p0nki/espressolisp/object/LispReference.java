@@ -2,7 +2,7 @@ package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
 
-public class LispReference extends LispObject implements LispRValue {
+public class LispReference extends LispObject {
 
     private final String name;
     private boolean constant;

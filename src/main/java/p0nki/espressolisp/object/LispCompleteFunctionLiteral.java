@@ -10,9 +10,9 @@ import p0nki.espressolisp.tree.LispTreeNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LispCompleteFunction extends LispFunction {
+public class LispCompleteFunctionLiteral extends LispFunctionLiteral {
 
-    public LispCompleteFunction(List<String> argNames, LispFunctionalInterface function) {
+    public LispCompleteFunctionLiteral(List<String> argNames, LispFunctionalInterface function) {
         super(argNames, new LispTreeNode(null) {
             @Override
             public LispObject evaluate(LispContext context) throws LispException {

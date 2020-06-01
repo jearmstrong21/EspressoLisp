@@ -1,6 +1,6 @@
 package p0nki.espressolisp.object;
 
-public abstract class LispLiteral extends LispObject implements LispRValue {
+public abstract class LispLiteral extends LispObject {
 
     @Override
     public LispObject get() {

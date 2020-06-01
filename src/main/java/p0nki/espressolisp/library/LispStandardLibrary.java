@@ -19,15 +19,15 @@ public enum LispStandardLibrary implements LispLibrary {
 
     @Override
     public void load(LispContext context) throws LispException {
-        context.set("std.randf", new LispCompleteFunction(new ArrayList<>(), (parentContext, args) -> new LispNumberLiteral(Math.random()))).makeConstant();
-        context.set("std.randb", new LispCompleteFunction(new ArrayList<>(), (parentContext, args) -> new LispBooleanLiteral(Math.random() < 0.5))).makeConstant();
-        context.set("std.println", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
+        context.set("std.randf", new LispCompleteFunctionLiteral(new ArrayList<>(), (parentContext, args) -> new LispNumberLiteral(Math.random()))).makeConstant();
+        context.set("std.randb", new LispCompleteFunctionLiteral(new ArrayList<>(), (parentContext, args) -> new LispBooleanLiteral(Math.random() < 0.5))).makeConstant();
+        context.set("std.println", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
             parentContext.getLogger().out(arg1);
-            return LispNullObject.INSTANCE;
+            return LispNullLiteral.INSTANCE;
         })).makeConstant();
-        context.set("std.warnln", new LispCompleteFunction(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
+        context.set("std.warnln", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> {
             parentContext.getLogger().warn(arg1);
-            return LispNullObject.INSTANCE;
+            return LispNullLiteral.INSTANCE;
         }));
     }
 
