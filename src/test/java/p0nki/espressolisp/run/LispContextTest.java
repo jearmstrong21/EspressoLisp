@@ -63,6 +63,10 @@ public class LispContextTest {
         context.potentialLibrary(LispStandardLibrary.INSTANCE);
         context.potentialLibrary(LispMathLibrary.INSTANCE);
         System.out.println();
+        System.out.println("BUILTIN SYMBOLS");
+        System.out.println(context.keys());
+        System.out.println();
+        System.out.println();
 
         //`del` test
 //        run(context, "(= x 5)");
@@ -139,6 +143,10 @@ public class LispContextTest {
         run(context, "(= b (push a (list 4 5)))");
         run(context, "a");
         run(context, "b");
+        run(context, "(pop a)");
+        run(context, "a");
+        run(context, "(= a (pop a))");
+        run(context, "a");
 
 //        run(context, "(concat 'hi' (concat ' ' 'world'))");
 //        run(context, "(concat 'hi' 'world')");

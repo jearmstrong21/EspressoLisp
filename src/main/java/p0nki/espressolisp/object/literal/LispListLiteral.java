@@ -18,6 +18,10 @@ public class LispListLiteral extends LispLiteral {
         return new LispListLiteral(objects.stream().map(LispObject::deepCopy).collect(Collectors.toList()));
     }
 
+    public List<LispObject> getObjects() {
+        return objects;
+    }
+
     @Override
     public String lispStr() {
         return "[" + objects.stream().map(LispObject::lispStr).collect(Collectors.joining(", ")) + "]";

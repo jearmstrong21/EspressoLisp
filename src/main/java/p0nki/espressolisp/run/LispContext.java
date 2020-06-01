@@ -22,6 +22,10 @@ public class LispContext {
     private final Map<String, LispReference> objects;
     private final LispLogger logger;
 
+    public Set<String> keys(){
+        return new HashSet<>(objects.keySet());
+    }
+
     public LispContext(LispLogger logger, LispContext parent) throws LispException {
         this.logger = logger;
         this.parent = parent;

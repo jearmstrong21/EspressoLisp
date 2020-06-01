@@ -61,7 +61,7 @@ public enum LispBuiltinLibrary implements LispLibrary {
                 ref.set(arg2);
                 if (ctx.getParent().isPresent()) ctx.getParent().get().set(ref.getName(), ref);
             }
-            return arg2;
+            return LispNullLiteral.INSTANCE;
         })).makeConstant();
         context.set("inc", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.fullyDereference();
@@ -131,10 +131,19 @@ public enum LispBuiltinLibrary implements LispLibrary {
         context.set("push", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (parentContext, arg1, arg2) -> {
             LispListLiteral list = arg1.fullyDereference().asList();
             LispObject toPush = arg2.fullyDereference();
-            List<LispObject> values = list.getObjects();
+            List<LispObject> values = list.deepCopy().asList().getObjects();
             values.add(toPush);
             return new LispListLiteral(values);
         })).makeConstant();
+        context.set("pop", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (parentContext, arg1, arg2) -> {
+            LispListLiteral list = arg1.fullyDereference().asList();
+            List<LispObject> values = list.deepCopy().asList().getObjects();
+            values.remove(values.size() - 1);
+            return new LispListLiteral(values);
+        })).makeConstant();
+        // TODO insert and remove for lists
+
+        context.set("copy", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (parentContext, arg1) -> arg1.fullyDereference().deepCopy())).makeConstant();
     }
 
     @Override
