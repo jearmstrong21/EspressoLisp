@@ -42,7 +42,6 @@ public class LispASTCreator {
                 case "func":
                     LispToken leftBracket = expect(tokens, LispTokenType.LEFT_BRACKET);
                     List<String> argNames = new ArrayList<>();
-                    boolean lookingForComma = false;
                     LispToken prevToken = leftBracket;
                     for (int i = 0; i < 1000; i++) {
                         LispToken token = tokens.remove(0);
@@ -50,20 +49,11 @@ public class LispASTCreator {
                             prevToken = token;
                             break;
                         }
-                        if (lookingForComma) {
-                            if (token.getType() != LispTokenType.COMMA) {
-                                throw LispException.expected(LispTokenType.COMMA, prevToken.getType(), token);
-                            }
-                            lookingForComma = false;
-                            prevToken = token;
-                        } else {
-                            if (token.getType() != LispTokenType.LITERAL) {
-                                throw LispException.expected(LispTokenType.LITERAL, prevToken.getType(), token);
-                            }
-                            lookingForComma = true;
-                            prevToken = token;
-                            argNames.add(((LispLiteralToken) token).getValue());
+                        if (token.getType() != LispTokenType.LITERAL) {
+                            throw LispException.expected(LispTokenType.LITERAL, prevToken.getType(), token);
                         }
+                        prevToken = token;
+                        argNames.add(((LispLiteralToken) token).getValue());
                     }
                     if (prevToken.getType() != LispTokenType.RIGHT_BRACKET) {
                         throw LispException.tooManyArguments(prevToken);

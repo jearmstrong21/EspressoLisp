@@ -65,10 +65,13 @@ public class LispContextTest {
         System.out.println();
 
         //`del` test
-        run(context, "(= x 5)");
-        run(context, "x");
-        run(context, "(del x)");
-        run(context, "x");
+//        run(context, "(= x 5)");
+//        run(context, "x");
+//        run(context, "(del x)");
+//        run(context, "x");
+
+//        run(context, "(concat 'alfalfa 'p0nki)");
+//        run(context, "(concat 'alfalfa' 'p0nki')");
 
 //        run(context, "(= x 5)");
 //        run(context, "x");
@@ -120,6 +123,9 @@ public class LispContextTest {
 //        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (factorial i)))");
 //        run(context, "(= fib (func [n] (if (< n 2) 1 (+ (fib (- n 1)) (fib (- n 2))))))");
 //        run(context, "(for (= i 1) (< i 11) (= i (inc i)) (std.println (fib i)))");
+
+        run(context, "(= sum (func [x y] (if (< x 2) 1 (if (< y 2) 1 (+ x (+ y (+ (sum (dec x) y) (sum x (dec y)))))))))");
+        run(context, "(sum 50 50)");
 
 //        run(context, "(concat 'hi' (concat ' ' 'world'))");
 //        run(context, "(concat 'hi' 'world')");
