@@ -25,6 +25,11 @@ public class LispNumberLiteral extends LispLiteral {
         return value + "";
     }
 
+    @Override
+    public int lispLen() throws LispException {
+        throw new LispException("len() not applicable to number", null);
+    }
+
     public LispNumberLiteral assertInteger () throws LispException {
         if((int)value != value) throw LispException.notInteger(value, null);
         return this;

@@ -3,6 +3,7 @@ package p0nki.espressolisp.object.literal;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.ToDebugJSON;
@@ -36,6 +37,11 @@ public class LispFunctionLiteral extends LispLiteral implements ToDebugJSON {
     @Override
     public String lispStr() {
         return "function[" + argNames.size() + "]";
+    }
+
+    @Override
+    public int lispLen() throws LispException {
+        throw new LispException("len() not applicable to function", null);
     }
 
     @Override

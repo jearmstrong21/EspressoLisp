@@ -4,8 +4,8 @@ import p0nki.espressolisp.adapter.LispDyadAdapter;
 import p0nki.espressolisp.adapter.LispMonadAdapter;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
-import p0nki.espressolisp.object.LispReference;
 import p0nki.espressolisp.object.literal.*;
+import p0nki.espressolisp.object.reference.LispReference;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.utils.Utils;
 
@@ -54,13 +54,8 @@ public enum LispBuiltinLibrary implements LispLibrary {
             arg1 = arg1.get();
             arg2 = arg2.fullyDereference();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
-            LispReference ref = (LispReference) arg1;
-            if (ctx.getParent().get().has(ref.getName())) {
-                ctx.getParent().get().get(ref.getName()).set(arg2);
-            } else {
-                ref.set(arg2);
-                if (ctx.getParent().isPresent()) ctx.getParent().get().set(ref.getName(), ref);
-            }
+            LispReference ref = arg1.asReference();
+            ref.set(arg2);
             return LispNullLiteral.INSTANCE;
         })).makeConstant();
         context.set("inc", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
@@ -99,13 +94,14 @@ public enum LispBuiltinLibrary implements LispLibrary {
             return LispNullLiteral.INSTANCE;
         })).makeConstant();
         context.set("import", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
-            arg1 = arg1.get();
-            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
+//            arg1 = arg1.get();
+//            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
+//            ctx.getParent().get().importLibrary(arg1.asReference().getName());
             if (!ctx.getParent().isPresent()) throw LispException.noParentContext(null);
-            ctx.getParent().get().importLibrary(arg1.asReference().getName());
+            String str = arg1.fullyDereference().asString().getValue();
+            ctx.getParent().get().importLibrary(str);
             return LispNullLiteral.INSTANCE;
         })).makeConstant();
-        context.set("str", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().lispStr()))).makeConstant();
         context.set("concat", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             arg1 = arg1.fullyDereference();
             arg2 = arg2.fullyDereference();
@@ -118,16 +114,54 @@ public enum LispBuiltinLibrary implements LispLibrary {
                             (int) args.get(1).fullyDereference().asNumber().assertInteger().getValue(),
                             (int) args.get(2).fullyDereference().asNumber().assertInteger().getValue()));
         })).makeConstant();
-        context.set("len", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispNumberLiteral(arg1.asString().getValue().length()))).makeConstant();
-        context.set("typeof", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().getType()))).makeConstant();
         context.set("del", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             arg1 = arg1.get();
             if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
             if (!ctx.getParent().isPresent()) throw LispException.noParentContext(null);
-            ctx.getParent().get().delete(arg1.asReference().getName());
+            arg1.asReference().delete();
             return LispNullLiteral.INSTANCE;
         })).makeConstant();
-        context.set("nth", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> arg1.fullyDereference().asList().getObjects().get((int) arg2.fullyDereference().asNumber().assertInteger().getValue()))).makeConstant();
+
+        context.set("nth", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+            final LispObject reference = arg1.get();
+            List<LispObject> objects = arg1.fullyDereference().asList().getObjects();
+            int index = (int) arg2.fullyDereference().asNumber().assertInteger().getValue();
+            if (-objects.size() < index && index < 0) index += objects.size();
+            int finalIndex = index;
+            return new LispReference("list[" + index + "]", false, new LispReference.Impl() {
+                @Override
+                public void set(LispObject newValue) throws LispException {
+                    if (reference.isLValue()) {
+                        objects.set(finalIndex, newValue);
+                        reference.asReference().set(new LispListLiteral(objects));
+                    } else {
+                        throw new LispException("Cannot set rvalue", null);
+                    }
+                }
+
+                @Override
+                public LispObject get() {
+                    return objects.get(finalIndex);
+                }
+
+                @Override
+                public void delete() throws LispException {
+                    if (reference.isLValue()) {
+                        objects.remove(finalIndex);
+                        reference.asReference().set(new LispListLiteral(objects));
+                    } else {
+                        throw new LispException("Cannot delete rvalue", null);
+                    }
+                }
+            });
+        })).makeConstant();
+        context.set("set", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2", "arg3"), (ctx, args) -> {
+            LispListLiteral arg1 = args.get(0).fullyDereference().asList();
+            LispObject arg2 = args.get(1).fullyDereference();
+            LispNumberLiteral arg3 = args.get(3).fullyDereference().asNumber().assertInteger();
+            arg1.getObjects().set((int) arg3.getValue(), arg2);
+            return LispNullLiteral.INSTANCE;
+        }));
         context.set("push", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             LispListLiteral list = arg1.fullyDereference().asList();
             LispObject toPush = arg2.fullyDereference();
@@ -135,17 +169,24 @@ public enum LispBuiltinLibrary implements LispLibrary {
             values.add(toPush);
             return new LispListLiteral(values);
         })).makeConstant();
-        context.set("pop", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+        context.set("pop", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
             LispListLiteral list = arg1.fullyDereference().asList();
             List<LispObject> values = list.deepCopy().asList().getObjects();
             values.remove(values.size() - 1);
             return new LispListLiteral(values);
         })).makeConstant();
-        // TODO insert and remove for lists
+
+        context.set("and", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> new LispBooleanLiteral(arg1.fullyDereference().asBoolean().getValue() && arg2.fullyDereference().asBoolean().getValue()))).makeConstant();
+        context.set("or", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> new LispBooleanLiteral(arg1.fullyDereference().asBoolean().getValue() || arg2.fullyDereference().asBoolean().getValue()))).makeConstant();
+        context.set("xor", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> new LispBooleanLiteral(arg1.fullyDereference().asBoolean().getValue() ^ arg2.fullyDereference().asBoolean().getValue()))).makeConstant();
+        // TODO insert  remove for lists
         // TODO for `nth` support negatives
         // TODO sublist
 
         context.set("copy", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> arg1.fullyDereference().deepCopy())).makeConstant();
+        context.set("str", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().lispStr()))).makeConstant();
+        context.set("len", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispNumberLiteral(arg1.fullyDereference().lispLen()))).makeConstant();
+        context.set("typeof", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().getType()))).makeConstant();
     }
 
     @Override

@@ -1,9 +1,11 @@
 package p0nki.espressolisp.object.literal;
 
+import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.StringJoiner;
 
 public class LispListLiteral extends LispLiteral {
 
@@ -14,8 +16,13 @@ public class LispListLiteral extends LispLiteral {
     }
 
     @Override
-    public LispObject deepCopy() {
-        return new LispListLiteral(objects.stream().map(LispObject::deepCopy).collect(Collectors.toList()));
+    public LispObject deepCopy() throws LispException {
+        List<LispObject> list = new ArrayList<>();
+        for (LispObject object : objects) {
+            LispObject deepCopy = object.deepCopy();
+            list.add(deepCopy);
+        }
+        return new LispListLiteral(list);
     }
 
     public List<LispObject> getObjects() {
@@ -23,13 +30,31 @@ public class LispListLiteral extends LispLiteral {
     }
 
     @Override
-    public String lispStr() {
-        return "[" + objects.stream().map(LispObject::lispStr).collect(Collectors.joining(", ")) + "]";
+    public String lispStr() throws LispException {
+        StringJoiner joiner = new StringJoiner(", ");
+        for (LispObject object : objects) {
+            String lispStr = object.lispStr();
+            joiner.add(lispStr);
+        }
+        return "[" + joiner.toString() + "]";
+    }
+
+    @Override
+    public int lispLen() {
+        return objects.size();
     }
 
     @Override
     public String toString() {
-        return "[" + objects.stream().map(LispObject::lispStr).collect(Collectors.joining(", ")) + "]";
+        StringJoiner joiner = new StringJoiner(", ");
+        for (LispObject object : objects) {
+            try {
+                joiner.add(object.lispStr());
+            } catch (LispException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return "list[" + joiner.toString() + "]";
     }
 
     @Override

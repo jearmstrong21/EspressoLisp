@@ -1,10 +1,7 @@
 package p0nki.espressolisp.tree;
 
 import p0nki.espressolisp.exceptions.LispException;
-import p0nki.espressolisp.object.literal.LispBooleanLiteral;
-import p0nki.espressolisp.object.literal.LispFunctionLiteral;
-import p0nki.espressolisp.object.literal.LispNullLiteral;
-import p0nki.espressolisp.object.literal.LispNumberLiteral;
+import p0nki.espressolisp.object.literal.*;
 import p0nki.espressolisp.token.LispLiteralToken;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
@@ -13,9 +10,9 @@ import p0nki.espressolisp.tree.controlflow.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO add a <T> expectToken(List<Token>, TokenType) which casts tokens.remove(0) as T and throws "expected" if type doesn't match
-
 public class LispASTCreator {
+
+    private static final int MAX_NODE_LIST = 1000;
 
     private LispASTCreator() {
 
@@ -30,16 +27,13 @@ public class LispASTCreator {
 
     private static List<LispTreeNode> readNodeList(List<LispToken> tokens, LispToken token) throws LispException {
         List<LispTreeNode> nodes = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {//TODO make this an actual parameter or class constant or configuration
+        for (int i = 0; i < MAX_NODE_LIST; i++) {
             if (tokens.size() == 0) throw LispException.prematureEnd(token);
             if (tokens.get(0).getType() == LispTokenType.RIGHT_PAREN) break;
             nodes.add(parse(tokens));
         }
         return nodes;
     }
-
-    // TODO make new nodes instead of instantiating classes inline
-    // TODO list literal, hardest part will be grammar for add / rem
 
     public static LispTreeNode parse(List<LispToken> tokens) throws LispException {
         LispToken first = tokens.remove(0);
@@ -51,6 +45,10 @@ public class LispASTCreator {
                 return new LispLiteralNode(new LispBooleanLiteral(literal.getBoolean().get()), literal);
             if (literal.getNull()) return new LispLiteralNode(LispNullLiteral.INSTANCE, literal);
             return new LispReferenceNode(literal.getValue(), literal);
+        } else if (first.getType() == LispTokenType.QUOTE) {
+            LispLiteralToken literal = expect(tokens, LispTokenType.LITERAL);
+            expect(tokens, LispTokenType.QUOTE);
+            return new LispLiteralNode(new LispStringLiteral(literal.getValue()), literal);
         } else if (first.getType() == LispTokenType.LEFT_PAREN) {
             LispToken tentativeSecond = tokens.get(0);
             if (tentativeSecond.getType() == LispTokenType.LITERAL) {
@@ -105,6 +103,12 @@ public class LispASTCreator {
                         LispTreeNode body = parse(tokens);
                         expect(tokens, LispTokenType.RIGHT_PAREN);
                         return new LispWhileNode(condition, body, tentative);
+                    }
+                    case "list":{
+                        expect(tokens, LispTokenType.LITERAL);
+                        List<LispTreeNode> nodes = readNodeList(tokens, tentative);
+                        expect(tokens, LispTokenType.RIGHT_PAREN);
+                        return new LispListNode(nodes, tentative);
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package p0nki.espressolisp.object.literal;
 
+import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 
 public class LispStringLiteral extends LispLiteral {
@@ -18,6 +19,11 @@ public class LispStringLiteral extends LispLiteral {
     @Override
     public String lispStr() {
         return value;
+    }
+
+    @Override
+    public int lispLen() {
+        return value.length();
     }
 
     public String getValue() {

@@ -2,12 +2,14 @@ package p0nki.espressolisp.object;
 
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.literal.*;
+import p0nki.espressolisp.object.reference.LispReference;
 
 public abstract class LispObject {
 
-    public abstract LispObject deepCopy();
+    public abstract LispObject deepCopy() throws LispException;
 
-    public abstract String lispStr();
+    public abstract String lispStr() throws LispException;
+    public abstract int lispLen() throws LispException;
 
     public abstract String toString();
 
@@ -15,13 +17,13 @@ public abstract class LispObject {
 
     public abstract boolean isLValue();
 
-    public final LispObject fullyDereference() {
+    public final LispObject fullyDereference() throws LispException {
         LispObject obj = this;
         while (obj.isLValue()) obj = obj.get();
         return obj.deepCopy();
     }
 
-    public abstract LispObject get();
+    public abstract LispObject get() throws LispException;
 
     public final LispListLiteral asList() throws LispException {
         if (this instanceof LispListLiteral) return (LispListLiteral) this;

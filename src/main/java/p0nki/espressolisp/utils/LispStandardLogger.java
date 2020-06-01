@@ -1,10 +1,11 @@
 package p0nki.espressolisp.utils;
 
+import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 
 public class LispStandardLogger implements LispLogger {
     @Override
-    public void out(LispObject object) {
+    public void out(LispObject object) throws LispException {
         System.out.print("=> " + object);
         while (object.isLValue()) {
             object = object.get();
@@ -19,7 +20,7 @@ public class LispStandardLogger implements LispLogger {
     }
 
     @Override
-    public void warn(LispObject object) {
+    public void warn(LispObject object) throws LispException {
         System.err.print("=> " + object);
         while (object.isLValue()) {
             object = object.get();

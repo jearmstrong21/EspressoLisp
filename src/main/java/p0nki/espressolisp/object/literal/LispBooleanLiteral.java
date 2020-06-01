@@ -1,5 +1,6 @@
 package p0nki.espressolisp.object.literal;
 
+import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 
 public class LispBooleanLiteral extends LispLiteral {
@@ -22,6 +23,11 @@ public class LispBooleanLiteral extends LispLiteral {
     @Override
     public String lispStr() {
         return value + "";
+    }
+
+    @Override
+    public int lispLen() throws LispException {
+        throw new LispException("len() not applicable to boolean", null);
     }
 
     @Override

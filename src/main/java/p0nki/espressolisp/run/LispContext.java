@@ -3,9 +3,9 @@ package p0nki.espressolisp.run;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.library.LispBuiltinLibrary;
 import p0nki.espressolisp.library.LispLibrary;
-import p0nki.espressolisp.object.literal.LispNullLiteral;
 import p0nki.espressolisp.object.LispObject;
-import p0nki.espressolisp.object.LispReference;
+import p0nki.espressolisp.object.literal.LispNullLiteral;
+import p0nki.espressolisp.object.reference.LispReference;
 import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.utils.LispLogger;
@@ -22,7 +22,7 @@ public class LispContext {
     private final Map<String, LispReference> objects;
     private final LispLogger logger;
 
-    public Set<String> keys(){
+    public Set<String> keys() {
         return new HashSet<>(objects.keySet());
     }
 
@@ -90,7 +90,24 @@ public class LispContext {
 
     public LispReference get(String name) {
         if (!objects.containsKey(name)) {
-            objects.put(name, new LispReference(name, false, LispNullLiteral.INSTANCE));
+            objects.put(name, new LispReference(name, false, new LispReference.Impl() {
+                private LispObject value;
+
+                @Override
+                public void set(LispObject newValue) {
+                    this.value = newValue;
+                }
+
+                @Override
+                public LispObject get() {
+                    return value;
+                }
+
+                @Override
+                public void delete() {
+                    value = LispNullLiteral.INSTANCE;
+                }
+            }));
         }
         return objects.get(name);
     }
