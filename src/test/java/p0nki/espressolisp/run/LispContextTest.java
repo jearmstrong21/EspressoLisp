@@ -147,5 +147,29 @@ public class LispContextTest {
         create().evaluate("(= (nth (list 1 2 3 4) 2) 5)");
     }
 
+    private void boolOp(LispContext ctx, String code, boolean res) throws LispException {
+        Assert.assertEquals(res, ctx.evaluate(code).fullyDereference().asBoolean().getValue());
+    }
+
+    @Test
+    public void testBooleanOps() throws LispException {
+        LispContext ctx = create();
+
+        boolOp(ctx, "(or true false)", true);
+        boolOp(ctx, "(or false true)", true);
+        boolOp(ctx, "(or true true)", true);
+        boolOp(ctx, "(or false false)", false);
+
+        boolOp(ctx, "(and true true)", true);
+        boolOp(ctx, "(and true false)", false);
+        boolOp(ctx, "(and false true)", false);
+        boolOp(ctx, "(and false false)", false);
+
+        boolOp(ctx, "(xor true true)", false);
+        boolOp(ctx, "(xor true false)", true);
+        boolOp(ctx, "(xor false true)", true);
+        boolOp(ctx, "(xor false false)", false);
+    }
+
 
 }

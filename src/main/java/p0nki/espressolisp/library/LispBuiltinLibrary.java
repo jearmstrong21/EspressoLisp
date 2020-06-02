@@ -5,6 +5,8 @@ import p0nki.espressolisp.adapter.LispMonadAdapter;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.literal.*;
+import p0nki.espressolisp.object.reference.LispListReferenceImpl;
+import p0nki.espressolisp.object.reference.LispMapReferenceImpl;
 import p0nki.espressolisp.object.reference.LispReference;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.utils.Utils;
@@ -128,72 +130,15 @@ public enum LispBuiltinLibrary implements LispLibrary {
             List<LispObject> objects = arg1.fullyDereference().asList().getObjects();
             int index = (int) arg2.fullyDereference().asNumber().assertInteger().getValue();
             if (-objects.size() < index && index < 0) index += objects.size();
-            int finalIndex = index;
-            return new LispReference("list[" + index + "]", false, new LispReference.Impl() {
-                @Override
-                public void set(LispObject newValue) throws LispException {
-                    if (reference.isLValue()) {
-                        objects.set(finalIndex, newValue);
-                        reference.asReference().set(new LispListLiteral(objects));
-                    } else {
-                        throw new LispException("Cannot set rvalue", null);
-                    }
-                }
-
-                @Override
-                public LispObject get() {
-                    return objects.get(finalIndex);
-                }
-
-                @Override
-                public void delete() throws LispException {
-                    if (reference.isLValue()) {
-                        objects.remove(finalIndex);
-                        reference.asReference().set(new LispListLiteral(objects));
-                    } else {
-                        throw new LispException("Cannot delete rvalue", null);
-                    }
-                }
-            });
+            return new LispReference("list[" + index + "]", false, new LispListReferenceImpl(reference, objects, index));
         })).makeConstant();
         context.set(".", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             final LispObject reference = arg1.get();
             Map<String, LispObject> objects = arg1.fullyDereference().asMap().getObjects();
             String key = arg2.fullyDereference().asString().getValue();
-            return new LispReference("map[" + key + "]", false, new LispReference.Impl() {
-                @Override
-                public void set(LispObject newValue) throws LispException {
-                    if (reference.isLValue()) {
-                        objects.put(key, newValue);
-                        reference.asReference().set(new LispMapLiteral(objects));
-                    } else {
-                        throw new LispException("Cannot set rvalue", null);
-                    }
-                }
-
-                @Override
-                public LispObject get() {
-                    return objects.get(key);
-                }
-
-                @Override
-                public void delete() throws LispException {
-                    if (reference.isLValue()) {
-                        objects.remove(key);
-                        reference.asReference().set(new LispMapLiteral(objects));
-                    } else {
-                        throw new LispException("Cannot delete rvalue", null);
-                    }
-                }
-            });
+            return new LispReference("map[" + key + "]", false, new LispMapReferenceImpl(reference, objects, key));
         })).makeConstant();
-        context.set("set", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2", "arg3"), (ctx, args) -> {
-            LispListLiteral arg1 = args.get(0).fullyDereference().asList();
-            LispObject arg2 = args.get(1).fullyDereference();
-            LispNumberLiteral arg3 = args.get(3).fullyDereference().asNumber().assertInteger();
-            arg1.getObjects().set((int) arg3.getValue(), arg2);
-            return LispNullLiteral.INSTANCE;
-        }));
+
         context.set("push", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
             LispListLiteral list = arg1.fullyDereference().asList();
             LispObject toPush = arg2.fullyDereference();
