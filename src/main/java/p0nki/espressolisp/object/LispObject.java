@@ -8,7 +8,7 @@ public abstract class LispObject {
 
     public abstract LispObject deepCopy() throws LispException;
 
-    public abstract String lispStr() throws LispException;
+    public abstract String lispStr();
 
     public abstract int lispLen() throws LispException;
 

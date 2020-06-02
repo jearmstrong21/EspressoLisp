@@ -28,7 +28,7 @@ public class LispMapLiteral extends LispLiteral {
     }
 
     @Override
-    public String lispStr() throws LispException {
+    public String lispStr() {
         StringBuilder str = new StringBuilder("{");
         boolean first = true;
         for (String key : objects.keySet()) {

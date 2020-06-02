@@ -35,11 +35,7 @@ public class LispListLiteral extends LispLiteral {
         for (LispObject object : objects) {
             if (!first) builder.append(" ");
             first = false;
-            try {
-                builder.append(object.lispStr());
-            } catch (LispException e) {
-                throw new RuntimeException(e);
-            }
+            builder.append(object.lispStr());
         }
         return builder.toString() + "]";
     }
