@@ -9,6 +9,7 @@ public abstract class LispObject {
     public abstract LispObject deepCopy() throws LispException;
 
     public abstract String lispStr() throws LispException;
+
     public abstract int lispLen() throws LispException;
 
     public abstract String toString();
@@ -28,6 +29,11 @@ public abstract class LispObject {
     public final LispListLiteral asList() throws LispException {
         if (this instanceof LispListLiteral) return (LispListLiteral) this;
         throw LispException.invalidType("list", getType(), null);
+    }
+
+    public final LispMapLiteral asMap() throws LispException {
+        if (this instanceof LispMapLiteral) return (LispMapLiteral) this;
+        throw LispException.invalidType("map", getType(), null);
     }
 
     public final LispNumberLiteral asNumber() throws LispException {

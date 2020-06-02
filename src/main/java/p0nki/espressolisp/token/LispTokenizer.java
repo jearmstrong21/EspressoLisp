@@ -73,6 +73,16 @@ public class LispTokenizer {
                     tokens.add(new LispToken(LispTokenType.COMMA, reader.getIndex() - 1, reader.getIndex()));
                     continue;
                 }
+                if (ch == '{') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.LEFT_BRACE, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
+                if (ch == '}') {
+                    flushBuffer();
+                    tokens.add(new LispToken(LispTokenType.RIGHT_BRACE, reader.getIndex() - 1, reader.getIndex()));
+                    continue;
+                }
                 if (ch == '\'') {
                     flushBuffer();
                     tokens.add(new LispToken(LispTokenType.QUOTE, reader.getIndex() - 1, reader.getIndex()));

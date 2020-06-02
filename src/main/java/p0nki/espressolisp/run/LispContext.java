@@ -91,7 +91,7 @@ public class LispContext {
     public LispReference get(String name) {
         if (!objects.containsKey(name)) {
             objects.put(name, new LispReference(name, false, new LispReference.Impl() {
-                private LispObject value;
+                private LispObject value = LispNullLiteral.INSTANCE;
 
                 @Override
                 public void set(LispObject newValue) {

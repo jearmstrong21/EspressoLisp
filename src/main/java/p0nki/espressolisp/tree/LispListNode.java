@@ -24,23 +24,16 @@ public class LispListNode extends LispTreeNode {
     @Override
     public LispObject evaluate(LispContext context) throws LispException {
         List<LispObject> objects = new ArrayList<>();
-        for (LispTreeNode node : nodes) objects.add(node.evaluate(context));
+        for (LispTreeNode node : nodes) objects.add(node.evaluate(context).fullyDereference());
         return new LispListLiteral(objects);
     }
 
     @Override
     public JSONObject toDebugJSON() throws JSONException {
         JSONArray arr = new JSONArray();
-        nodes.forEach(node -> {
-            try {
-                arr.put(node.toDebugJSON());
-            } catch (JSONException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        });
+        for (LispTreeNode node : nodes) arr.put(node.toDebugJSON());
         return new JSONObject()
                 .put("type", "uninvoked_list")
-                .put("elements", "");
+                .put("elements", arr);
     }
 }

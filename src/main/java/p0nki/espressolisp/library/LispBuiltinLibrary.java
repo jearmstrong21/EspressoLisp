@@ -10,6 +10,7 @@ import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.utils.Utils;
 
 import java.util.List;
+import java.util.Map;
 
 public enum LispBuiltinLibrary implements LispLibrary {
 
@@ -155,6 +156,37 @@ public enum LispBuiltinLibrary implements LispLibrary {
                 }
             });
         })).makeConstant();
+        context.set(".", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> {
+            final LispObject reference = arg1.get();
+            Map<String, LispObject> objects = arg1.fullyDereference().asMap().getObjects();
+            String key = arg2.fullyDereference().asString().getValue();
+            return new LispReference("map[" + key + "]", false, new LispReference.Impl() {
+                @Override
+                public void set(LispObject newValue) throws LispException {
+                    if (reference.isLValue()) {
+                        objects.put(key, newValue);
+                        reference.asReference().set(new LispMapLiteral(objects));
+                    } else {
+                        throw new LispException("Cannot set rvalue", null);
+                    }
+                }
+
+                @Override
+                public LispObject get() {
+                    return objects.get(key);
+                }
+
+                @Override
+                public void delete() throws LispException {
+                    if (reference.isLValue()) {
+                        objects.remove(key);
+                        reference.asReference().set(new LispMapLiteral(objects));
+                    } else {
+                        throw new LispException("Cannot delete rvalue", null);
+                    }
+                }
+            });
+        })).makeConstant();
         context.set("set", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2", "arg3"), (ctx, args) -> {
             LispListLiteral arg1 = args.get(0).fullyDereference().asList();
             LispObject arg2 = args.get(1).fullyDereference();
@@ -187,6 +219,9 @@ public enum LispBuiltinLibrary implements LispLibrary {
         context.set("str", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().lispStr()))).makeConstant();
         context.set("len", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispNumberLiteral(arg1.fullyDereference().lispLen()))).makeConstant();
         context.set("typeof", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().getType()))).makeConstant();
+
+        //TODO figure out if this should be deleted. DO NOT RESOLVE TODO UNTIL THIS IS EITHER UNCOMMENTED OR DELETED
+//        context.set("deref", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> arg1.fullyDereference())).makeConstant();
     }
 
     @Override

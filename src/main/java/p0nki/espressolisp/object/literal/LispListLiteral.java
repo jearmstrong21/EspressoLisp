@@ -5,7 +5,6 @@ import p0nki.espressolisp.object.LispObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 public class LispListLiteral extends LispLiteral {
 
@@ -30,13 +29,19 @@ public class LispListLiteral extends LispLiteral {
     }
 
     @Override
-    public String lispStr() throws LispException {
-        StringJoiner joiner = new StringJoiner(", ");
+    public String lispStr() {
+        StringBuilder builder = new StringBuilder("[");
+        boolean first = true;
         for (LispObject object : objects) {
-            String lispStr = object.lispStr();
-            joiner.add(lispStr);
+            if (!first) builder.append(" ");
+            first = false;
+            try {
+                builder.append(object.lispStr());
+            } catch (LispException e) {
+                throw new RuntimeException(e);
+            }
         }
-        return "[" + joiner.toString() + "]";
+        return builder.toString() + "]";
     }
 
     @Override
@@ -46,15 +51,7 @@ public class LispListLiteral extends LispLiteral {
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(", ");
-        for (LispObject object : objects) {
-            try {
-                joiner.add(object.lispStr());
-            } catch (LispException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return "list[" + joiner.toString() + "]";
+        return "list" + lispStr();
     }
 
     @Override

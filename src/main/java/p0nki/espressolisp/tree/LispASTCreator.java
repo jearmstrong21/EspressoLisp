@@ -104,11 +104,25 @@ public class LispASTCreator {
                         expect(tokens, LispTokenType.RIGHT_PAREN);
                         return new LispWhileNode(condition, body, tentative);
                     }
-                    case "list":{
+                    case "list": {
                         expect(tokens, LispTokenType.LITERAL);
                         List<LispTreeNode> nodes = readNodeList(tokens, tentative);
                         expect(tokens, LispTokenType.RIGHT_PAREN);
                         return new LispListNode(nodes, tentative);
+                    }
+                    case "map": {
+                        expect(tokens, LispTokenType.LITERAL);
+                        List<LispTreeNode> nodes = readNodeList(tokens, tentative);
+                        if (nodes.size() % 2 == 1)
+                            throw new LispException("Expected even number of values for map", tentative);
+                        expect(tokens, LispTokenType.RIGHT_PAREN);
+                        List<LispTreeNode> keys = new ArrayList<>();
+                        List<LispTreeNode> values = new ArrayList<>();
+                        for (int i = 0; i < nodes.size() / 2; i++) {
+                            keys.add(nodes.get(i * 2));
+                            values.add(nodes.get(i * 2 + 1));
+                        }
+                        return new LispMapNode(keys, values, tentative);
                     }
                 }
             }
