@@ -171,5 +171,15 @@ public class LispContextTest {
         boolOp(ctx, "(xor false false)", false);
     }
 
+    @Test(timeout = 100)
+    public void testBoundInvoke() throws LispException {
+        LispContext ctx = create();
+//        run(ctx, "(= object (map 'counter' 0 'run' (func [self] (do (std.warnln (concat '[PROG] self = ' (str self)) (std.warnln (concat '[PROG] arg1 = ' (str arg1)) (std.warnln (concat '[PROG] self.counter = ' 'hello world'))))");
+        run(ctx, "(= object (map 'counter' 0 'run' (func [self] (do (= (. self 'counter') (inc (. self 'counter'))) 'hello world'))))");
+        run(ctx, "object");
+        run(ctx, "(:: object 'run')");
+        run(ctx, "object");
+    }
+
 
 }

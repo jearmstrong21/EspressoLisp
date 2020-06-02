@@ -6,6 +6,7 @@ import p0nki.espressolisp.library.LispLibrary;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.literal.LispNullLiteral;
 import p0nki.espressolisp.object.reference.LispReference;
+import p0nki.espressolisp.object.reference.LispStandardReferenceImpl;
 import p0nki.espressolisp.token.LispTokenizer;
 import p0nki.espressolisp.tree.LispASTCreator;
 import p0nki.espressolisp.utils.LispLogger;
@@ -90,24 +91,7 @@ public class LispContext {
 
     public LispReference get(String name) {
         if (!objects.containsKey(name)) {
-            objects.put(name, new LispReference(name, false, new LispReference.Impl() {
-                private LispObject value = LispNullLiteral.INSTANCE;
-
-                @Override
-                public void set(LispObject newValue) {
-                    this.value = newValue;
-                }
-
-                @Override
-                public LispObject get() {
-                    return value;
-                }
-
-                @Override
-                public void delete() {
-                    value = LispNullLiteral.INSTANCE;
-                }
-            }));
+            objects.put(name, new LispReference(name, false, new LispStandardReferenceImpl(LispNullLiteral.INSTANCE)));
         }
         return objects.get(name);
     }

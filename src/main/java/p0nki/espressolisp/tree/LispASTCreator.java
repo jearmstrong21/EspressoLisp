@@ -6,6 +6,10 @@ import p0nki.espressolisp.token.LispLiteralToken;
 import p0nki.espressolisp.token.LispToken;
 import p0nki.espressolisp.token.LispTokenType;
 import p0nki.espressolisp.tree.controlflow.*;
+import p0nki.espressolisp.tree.object.LispListNode;
+import p0nki.espressolisp.tree.object.LispLiteralNode;
+import p0nki.espressolisp.tree.object.LispMapNode;
+import p0nki.espressolisp.tree.object.LispReferenceNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,7 @@ public class LispASTCreator {
 
     @SuppressWarnings("unchecked") // what the fuck java
     private static <T extends LispToken> T expect(List<LispToken> tokens, LispTokenType type) throws LispException {
+        if (tokens.size() == 0) throw LispException.expected(type, null);
         LispToken token = tokens.remove(0);
         if (token.getType() != type) throw LispException.expected(type, token);
         return (T) token;
@@ -123,6 +128,14 @@ public class LispASTCreator {
                             values.add(nodes.get(i * 2 + 1));
                         }
                         return new LispMapNode(keys, values, tentative);
+                    }
+                    case "::": {
+                        expect(tokens, LispTokenType.LITERAL);
+                        LispTreeNode object = parse(tokens);
+                        LispTreeNode func = parse(tokens);
+                        List<LispTreeNode> args = readNodeList(tokens, tentative);
+                        expect(tokens, LispTokenType.RIGHT_PAREN);
+                        return new LispBoundInvokeNode(object, func, args, tentative);
                     }
                 }
             }

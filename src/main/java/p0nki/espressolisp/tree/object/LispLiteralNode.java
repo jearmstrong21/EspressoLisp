@@ -1,10 +1,11 @@
-package p0nki.espressolisp.tree;
+package p0nki.espressolisp.tree.object;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
+import p0nki.espressolisp.tree.LispTreeNode;
 import p0nki.espressolisp.utils.ToDebugJSON;
 
 public class LispLiteralNode extends LispTreeNode {
