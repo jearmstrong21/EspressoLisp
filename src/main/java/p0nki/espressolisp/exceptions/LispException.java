@@ -7,7 +7,6 @@ public class LispException extends Exception {
 
     private LispToken token;
 
-    //TODO delete all the static methods
     public LispException(String message, LispToken token) {
         super(message);
         this.token = token;

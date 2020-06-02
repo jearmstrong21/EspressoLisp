@@ -156,17 +156,12 @@ public enum LispBuiltinLibrary implements LispLibrary {
         context.set("and", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> new LispBooleanLiteral(arg1.fullyDereference().asBoolean().getValue() && arg2.fullyDereference().asBoolean().getValue()))).makeConstant();
         context.set("or", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> new LispBooleanLiteral(arg1.fullyDereference().asBoolean().getValue() || arg2.fullyDereference().asBoolean().getValue()))).makeConstant();
         context.set("xor", new LispCompleteFunctionLiteral(Utils.of("arg1", "arg2"), (LispDyadAdapter) (ctx, arg1, arg2) -> new LispBooleanLiteral(arg1.fullyDereference().asBoolean().getValue() ^ arg2.fullyDereference().asBoolean().getValue()))).makeConstant();
-        // TODO insert  remove for lists
-        // TODO for `nth` support negatives
-        // TODO sublist
 
         context.set("copy", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> arg1.fullyDereference().deepCopy())).makeConstant();
         context.set("str", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().lispStr()))).makeConstant();
         context.set("len", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispNumberLiteral(arg1.fullyDereference().lispLen()))).makeConstant();
         context.set("typeof", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> new LispStringLiteral(arg1.fullyDereference().getType()))).makeConstant();
 
-        //TODO figure out if this should be deleted. DO NOT RESOLVE TODO UNTIL THIS IS EITHER UNCOMMENTED OR DELETED
-//        context.set("deref", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> arg1.fullyDereference())).makeConstant();
     }
 
     @Override
