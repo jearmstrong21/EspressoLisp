@@ -43,4 +43,9 @@ public class LispMapReferenceImpl implements LispReference.Impl {
         }
     }
 
+    @Override
+    public boolean canBeConstant() {
+        return false;
+    }
+
 }

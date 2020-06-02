@@ -5,20 +5,9 @@ import p0nki.espressolisp.object.LispObject;
 
 public class LispReference extends LispObject {
 
-    public interface Impl {
-
-        void set(LispObject newValue) throws LispException;
-
-        LispObject get() throws LispException;
-
-        void delete() throws LispException;
-
-    }
-
     private final String name;
-    private boolean constant;
     private final Impl impl;
-
+    private boolean constant;
     public LispReference(String name, boolean constant, Impl impl) {
         this.name = name;
         this.constant = constant;
@@ -38,7 +27,8 @@ public class LispReference extends LispObject {
         return constant;
     }
 
-    public void makeConstant() {
+    public void makeConstant() throws LispException {
+        if (!impl.canBeConstant()) throw new LispException("Cannot make value constant", null);
         constant = true;
     }
 
@@ -78,7 +68,19 @@ public class LispReference extends LispObject {
     }
 
     @Override
-    public LispObject get() throws LispException {
+    public LispObject get() {
         return impl.get();
+    }
+
+    public interface Impl {
+
+        void set(LispObject newValue) throws LispException;
+
+        LispObject get();
+
+        void delete() throws LispException;
+
+        boolean canBeConstant();
+
     }
 }

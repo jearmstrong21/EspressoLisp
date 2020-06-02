@@ -36,7 +36,6 @@ public class LispLiteralToken extends LispToken {
 
     @Override
     public String toString() {
-//        return String.format("%-10s", value) + "UNQUOTED_LITERAL";
         return "UNQUOTED_LITERAL[" + value + ",[" + getStartIndex() + "," + getEndIndex() + "]]";
     }
 }

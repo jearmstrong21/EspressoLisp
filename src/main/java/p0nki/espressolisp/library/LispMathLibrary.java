@@ -1,6 +1,5 @@
 package p0nki.espressolisp.library;
 
-import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.run.LispContext;
 
 public enum LispMathLibrary implements LispLibrary {
@@ -13,12 +12,8 @@ public enum LispMathLibrary implements LispLibrary {
     }
 
     @Override
-    public void load(LispContext context) throws LispException {
+    public void load(LispContext context) {
 
     }
 
-    @Override
-    public void fullImport(LispContext context) throws LispException {
-
-    }
 }

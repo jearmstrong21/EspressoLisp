@@ -1,6 +1,5 @@
 package p0nki.espressolisp.object.literal;
 
-import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 
 public class LispStringLiteral extends LispLiteral {

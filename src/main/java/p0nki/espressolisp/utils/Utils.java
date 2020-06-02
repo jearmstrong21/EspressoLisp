@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Utils {
 
+    @SafeVarargs
     public static <T> List<T> of(T... values) {
         List<T> list = new ArrayList<>();
         Collections.addAll(list, values);

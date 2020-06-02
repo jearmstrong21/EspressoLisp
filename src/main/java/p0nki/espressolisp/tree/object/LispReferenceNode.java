@@ -2,7 +2,6 @@ package p0nki.espressolisp.tree.object;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.run.LispContext;
 import p0nki.espressolisp.token.LispToken;
@@ -17,10 +16,6 @@ public class LispReferenceNode extends LispTreeNode {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public LispObject evaluate(LispContext context) {
         return context.get(name);
@@ -29,7 +24,7 @@ public class LispReferenceNode extends LispTreeNode {
     @Override
     public JSONObject toDebugJSON() throws JSONException {
         return new JSONObject()
-                .put("type","ref")
+                .put("type", "ref")
                 .put("name", name);
     }
 }

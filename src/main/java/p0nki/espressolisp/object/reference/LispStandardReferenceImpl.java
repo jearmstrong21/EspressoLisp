@@ -1,6 +1,5 @@
 package p0nki.espressolisp.object.reference;
 
-import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.literal.LispNullLiteral;
 
@@ -25,5 +24,10 @@ public class LispStandardReferenceImpl implements LispReference.Impl {
     @Override
     public void delete() {
         value = LispNullLiteral.INSTANCE;
+    }
+
+    @Override
+    public boolean canBeConstant() {
+        return true;
     }
 }

@@ -9,6 +9,7 @@ public class LispTokenizer {
 
     private final List<LispToken> tokens;
     private final LispCodeReader reader;
+    private StringBuffer buffer = new StringBuffer();
 
     private LispTokenizer(List<LispToken> tokens, LispCodeReader reader) {
         this.tokens = tokens;
@@ -17,10 +18,17 @@ public class LispTokenizer {
         flushBuffer();
     }
 
-    private StringBuffer buffer = new StringBuffer();
+    public static List<LispToken> tokenize(String code) {
+        return tokenize(new LispCodeReader(code));
+    }
+
+    public static List<LispToken> tokenize(LispCodeReader reader) {
+        List<LispToken> tokens = new ArrayList<>();
+        new LispTokenizer(tokens, reader);
+        return tokens;
+    }
 
     private void flushBuffer() {
-//        buffer = new StringBuffer(buffer.toString().trim());
         if (buffer.length() == 0) return;
         tokens.add(new LispLiteralToken(buffer.toString(), reader.getIndex() - buffer.length() - 1, reader.getIndex() - 1));
         buffer = new StringBuffer();
@@ -92,16 +100,6 @@ public class LispTokenizer {
                 buffer.append(ch);
             }
         }
-    }
-
-    public static List<LispToken> tokenize(String code) {
-        return tokenize(new LispCodeReader(code));
-    }
-
-    public static List<LispToken> tokenize(LispCodeReader reader) {
-        List<LispToken> tokens = new ArrayList<>();
-        new LispTokenizer(tokens, reader);
-        return tokens;
     }
 
 }

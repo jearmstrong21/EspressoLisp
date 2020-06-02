@@ -36,6 +36,6 @@ public class LispIfNode extends LispTreeNode {
                 .put("type", "if")
                 .put("condition", condition.toDebugJSON())
                 .put("then", then.toDebugJSON()
-                .put("otherwise", otherwise.toDebugJSON()));
+                        .put("otherwise", otherwise.toDebugJSON()));
     }
 }

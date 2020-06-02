@@ -24,7 +24,7 @@ public abstract class LispObject {
         return obj.deepCopy();
     }
 
-    public abstract LispObject get() throws LispException;
+    public abstract LispObject get();
 
     public final LispListLiteral asList() throws LispException {
         if (this instanceof LispListLiteral) return (LispListLiteral) this;

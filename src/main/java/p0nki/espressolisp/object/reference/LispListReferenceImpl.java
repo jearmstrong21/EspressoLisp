@@ -3,7 +3,6 @@ package p0nki.espressolisp.object.reference;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.literal.LispListLiteral;
-import p0nki.espressolisp.object.literal.LispMapLiteral;
 
 import java.util.List;
 
@@ -18,6 +17,7 @@ public class LispListReferenceImpl implements LispReference.Impl {
         this.objects = objects;
         this.index = index;
     }
+
     @Override
     public void set(LispObject newValue) throws LispException {
         if (reference.isLValue()) {
@@ -41,6 +41,11 @@ public class LispListReferenceImpl implements LispReference.Impl {
         } else {
             throw new LispException("Cannot delete rvalue", null);
         }
+    }
+
+    @Override
+    public boolean canBeConstant() {
+        return false;
     }
 
 }

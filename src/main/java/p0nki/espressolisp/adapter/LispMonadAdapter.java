@@ -12,7 +12,7 @@ public interface LispMonadAdapter extends LispFunctionalInterface {
 
     @Override
     default LispObject evaluate(LispContext ctx, List<LispObject> args) throws LispException {
-        if(args.size() != 1) throw LispException.invalidArgList(1, args.size(), null);
+        if (args.size() != 1) throw LispException.invalidArgList(1, args.size(), null);
         return evaluate(ctx, args.get(0));
     }
 

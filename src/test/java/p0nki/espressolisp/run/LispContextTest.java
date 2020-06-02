@@ -19,6 +19,14 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class LispContextTest {
 
+    private static LispContext create() throws LispException {
+        LispContext ctx = new LispContext(new LispStandardLogger(), null);
+        ctx.potentialLibrary(LispStandardLibrary.INSTANCE);
+        ctx.potentialLibrary(LispMathLibrary.INSTANCE);
+        ctx.evaluate("(import 'std')");
+        return ctx;
+    }
+
     private void run(LispContext context, String code) {
         List<LispToken> tokens = LispTokenizer.tokenize(code);
         List<LispToken> originalTokens = new ArrayList<>(tokens);
@@ -55,14 +63,6 @@ public class LispContextTest {
             }
         }
         System.out.println();
-    }
-
-    private static LispContext create() throws LispException {
-        LispContext ctx = new LispContext(new LispStandardLogger(), null);
-        ctx.potentialLibrary(LispStandardLibrary.INSTANCE);
-        ctx.potentialLibrary(LispMathLibrary.INSTANCE);
-        ctx.evaluate("(import 'std')");
-        return ctx;
     }
 
     @Test(timeout = 100)
@@ -174,11 +174,23 @@ public class LispContextTest {
     @Test(timeout = 100)
     public void testBoundInvoke() throws LispException {
         LispContext ctx = create();
-//        run(ctx, "(= object (map 'counter' 0 'run' (func [self] (do (std.warnln (concat '[PROG] self = ' (str self)) (std.warnln (concat '[PROG] arg1 = ' (str arg1)) (std.warnln (concat '[PROG] self.counter = ' 'hello world'))))");
-        run(ctx, "(= object (map 'counter' 0 'run' (func [self] (do (= (. self 'counter') (inc (. self 'counter'))) 'hello world'))))");
-        run(ctx, "object");
-        run(ctx, "(:: object 'run')");
-        run(ctx, "object");
+        ctx.evaluate("(= object (map 'counter' 5 'run' (func [self] (do (= (. self 'counter') (inc (. self 'counter'))) 'hello world'))))");
+        ctx.evaluate("(:: object 'run')");
+        Assert.assertEquals(6, (int) ctx.evaluate("(. object 'counter')").fullyDereference().asNumber().assertInteger().getValue());
+    }
+
+    @Test(timeout = 100, expected = LispException.class)
+    public void testConstMapField() throws LispException {
+        LispContext ctx = create();
+        ctx.evaluate("(= obj (map 'a' 1 'b' 4))");
+        ctx.evaluate("(const (. obj 'a'))");
+    }
+
+    @Test(timeout = 100, expected = LispException.class)
+    public void testConstListField() throws LispException {
+        LispContext ctx = create();
+        ctx.evaluate("(= l (list 1 2 3))");
+        ctx.evaluate("(const (nth l -1))");
     }
 
 

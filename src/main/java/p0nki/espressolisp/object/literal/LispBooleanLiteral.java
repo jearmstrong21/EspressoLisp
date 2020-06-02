@@ -5,15 +5,15 @@ import p0nki.espressolisp.object.LispObject;
 
 public class LispBooleanLiteral extends LispLiteral {
 
-    @Override
-    public LispObject deepCopy() {
-        return new LispBooleanLiteral(value);
-    }
-
     private final boolean value;
 
     public LispBooleanLiteral(boolean value) {
         this.value = value;
+    }
+
+    @Override
+    public LispObject deepCopy() {
+        return new LispBooleanLiteral(value);
     }
 
     public boolean getValue() {

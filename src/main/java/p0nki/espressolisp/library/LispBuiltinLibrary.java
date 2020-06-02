@@ -97,9 +97,6 @@ public enum LispBuiltinLibrary implements LispLibrary {
             return LispNullLiteral.INSTANCE;
         })).makeConstant();
         context.set("import", new LispCompleteFunctionLiteral(Utils.of("arg1"), (LispMonadAdapter) (ctx, arg1) -> {
-//            arg1 = arg1.get();
-//            if (!arg1.isLValue()) throw LispException.invalidValueType(true, false, null);
-//            ctx.getParent().get().importLibrary(arg1.asReference().getName());
             if (!ctx.getParent().isPresent()) throw LispException.noParentContext(null);
             String str = arg1.fullyDereference().asString().getValue();
             ctx.getParent().get().importLibrary(str);
@@ -164,8 +161,4 @@ public enum LispBuiltinLibrary implements LispLibrary {
 
     }
 
-    @Override
-    public void fullImport(LispContext context) {
-        context.getLogger().warn("ATTEMPTED TO IMPORT BUILTIN LIBRARY");
-    }
 }

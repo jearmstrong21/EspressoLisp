@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import p0nki.espressolisp.exceptions.LispException;
 import p0nki.espressolisp.object.LispObject;
 import p0nki.espressolisp.object.literal.LispFunctionLiteral;
-import p0nki.espressolisp.object.literal.LispNullLiteral;
 import p0nki.espressolisp.object.reference.LispReference;
 import p0nki.espressolisp.object.reference.LispStandardReferenceImpl;
 import p0nki.espressolisp.run.LispContext;

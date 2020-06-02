@@ -10,12 +10,12 @@ public class LispMapLiteral extends LispLiteral {
 
     private final Map<String, LispObject> objects;
 
-    public Map<String, LispObject> getObjects() {
-        return objects;
-    }
-
     public LispMapLiteral(Map<String, LispObject> objects) {
         this.objects = objects;
+    }
+
+    public Map<String, LispObject> getObjects() {
+        return objects;
     }
 
     @Override

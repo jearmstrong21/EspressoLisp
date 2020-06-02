@@ -18,14 +18,9 @@ public class LispContext {
     private final LispContext parent;
     private final Map<String, LispLibrary> potentialLibraries;
     private final List<String> loadedLibraries;
-    private final List<String> importedLibraries;
 
     private final Map<String, LispReference> objects;
     private final LispLogger logger;
-
-    public Set<String> keys() {
-        return new HashSet<>(objects.keySet());
-    }
 
     public LispContext(LispLogger logger, LispContext parent) throws LispException {
         this.logger = logger;
@@ -38,13 +33,10 @@ public class LispContext {
 
         loadedLibraries = new ArrayList<>();
         loadedLibraries.add("builtin");
-
-        importedLibraries = new ArrayList<>();
-        importedLibraries.add("builtin");
     }
 
-    public boolean hasLoaded(String name) {
-        return loadedLibraries.contains(name);
+    public Set<String> keys() {
+        return new HashSet<>(objects.keySet());
     }
 
     public void potentialLibrary(LispLibrary library) {
@@ -70,17 +62,8 @@ public class LispContext {
         return get(name);
     }
 
-    public void delete(String name) throws LispException {
-        if (!objects.containsKey(name)) throw LispException.unknownVariable(name, null);
-        objects.remove(name);
-    }
-
     public Optional<LispContext> getParent() {
         return Optional.ofNullable(parent);
-    }
-
-    public boolean has(String name) {
-        return objects.containsKey(name);
     }
 
     public LispContext push() throws LispException {
